@@ -86,9 +86,9 @@
       this.moveDX = 0;
       this.moveDY = 0;
 
-      // Bounds - use documentElement.clientWidth to exclude scrollbar
+      // Bounds - clientWidth excludes scrollbar, innerHeight is viewport height
       this.boundsWidth = document.documentElement.clientWidth - SPRITE_SIZE;
-      this.boundsHeight = document.documentElement.clientHeight - SPRITE_SIZE;
+      this.boundsHeight = window.innerHeight - SPRITE_SIZE;
 
       // Mouse tracking - null until first mouse event
       // This prevents neko from running somewhere before user moves mouse
@@ -183,10 +183,10 @@
       // Update bounds on resize
       window.addEventListener("resize", () => {
         this.boundsWidth = document.documentElement.clientWidth - SPRITE_SIZE;
-        this.boundsHeight = document.documentElement.clientHeight - SPRITE_SIZE;
+        this.boundsHeight = window.innerHeight - SPRITE_SIZE;
       });
 
-      // Random starting position
+      // Random starting position within viewport
       this.x = Math.random() * this.boundsWidth;
       this.y = Math.random() * this.boundsHeight;
       this.logicX = this.x;
