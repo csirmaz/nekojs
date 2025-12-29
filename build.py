@@ -68,7 +68,7 @@ def build():
         "Right1.ico",  # 5: Right frame 1
         "right2.ico",  # 6: Right frame 2
         "Downright1.ico",  # 7: Down-right frame 1
-        "Downright2.ico",  # 8: Down-right frame 2
+        "downright2.ico",  # 8: Down-right frame 2
         "Down1.ico",  # 9: Down frame 1
         "down2.ico",  # 10: Down frame 2
         "Downleft2.ico",  # 11: Down-left frame 1 (note: files are named 2,1 not 1,2)
