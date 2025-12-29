@@ -6,16 +6,17 @@ A JavaScript implementation of the classic Neko desktop pet for the web.
 
 ## About
 
-Neko is a classic desktop pet that follows your mouse cursor around the screen. Originally created by **Masayuki Koba** for X-Windows and ported to Windows 95/98 by **David Harvey** in 1998, this JavaScript version brings the beloved cat to modern web browsers.
+Neko is a classic desktop pet that follows your mouse cursor around the screen. Originally created by **Masayuki Koba** for X-Windows and ported to Windows 95/98 by **David Harvey** in 1998, this JavaScript version brings the **beloved** cat to modern web browsers.
 
 ### Features
 
 - 🎯 **Follows your cursor** - Chases your mouse around the page
 - 💤 **Idle animations** - Falls asleep when you stop moving
+- 🐾 **Faithful recreation** - Matches original Neko98 state machine and behavior
 - 🎨 **Pixel-perfect** - Uses original 32x32 pixel sprites
-- ⚡ **Lightweight** - Only 28KB bundled with sprites embedded
+- ⚡ **Lightweight** - Only ~38KB uncompressed with sprites embedded (brotli compressed to ~14KB)
 - 🚀 **Zero dependencies** - Pure vanilla JavaScript
-- 📱 **Responsive** - Works on desktop and mobile
+- 🖱️ **Interactive** - Click to change behavior modes
 
 ## Installation
 
@@ -34,11 +35,11 @@ For more control over initialization:
 ```html
 <script src="https://louisabraham.github.io/nekojs/neko.js"></script>
 <script>
-  // Create and start Neko
+  // Create and start Neko with custom options
   const neko = createNeko({
-    speed: 10,              // Movement speed (pixels per frame)
+    speed: 24,              // Pixels per logic tick at 5 ticks/sec (default: 24)
     behaviorMode: 0,        // 0 = chase mouse (see Behavior Modes below)
-    idleThreshold: 8        // Distance threshold to stop moving
+    idleThreshold: 6        // Distance threshold to consider idle (default: 6)
   });
 </script>
 ```
@@ -64,9 +65,10 @@ const neko = createNeko(options);
 ```
 
 **Options:**
-- `speed` (number, default: 10) - Movement speed in pixels per frame
+- `speed` (number, default: 24) - Movement speed in pixels per logic tick (5 ticks/second)
+- `fps` (number, default: 120) - Render frame rate for smooth interpolation
 - `behaviorMode` (number, default: 0) - Behavior pattern (see below)
-- `idleThreshold` (number, default: 8) - Distance to stop moving
+- `idleThreshold` (number, default: 6) - Distance threshold for idle detection
 - `allowBehaviorChange` (boolean, default: true) - Allow clicking Neko to cycle behaviors
 - `startX` (number) - Initial X position
 - `startY` (number) - Initial Y position
@@ -94,9 +96,10 @@ neko.behaviorMode = 4;  // Run Around (chase invisible ball)
 ### Methods
 
 ```javascript
-neko.start();     // Start the animation loop
-neko.stop();      // Stop the animation loop
-neko.destroy();   // Remove Neko from the page
+neko.start();          // Start the animation loop
+neko.stop();           // Stop the animation loop
+neko.destroy();        // Remove Neko from the page
+neko.cycleBehavior();  // Manually cycle to next behavior
 ```
 
 ### Properties
@@ -106,6 +109,7 @@ neko.x            // Current X position
 neko.y            // Current Y position
 neko.state        // Current animation state
 neko.running      // Whether animation is running
+neko.behaviorMode // Current behavior mode
 ```
 
 ## Building from Source
@@ -132,7 +136,7 @@ The build script:
 1. Converts ICO sprites from the original Neko98 to PNG
 2. Encodes sprites as base64 data URIs
 3. Bundles sprites with JavaScript code
-4. Outputs a single minified file to `docs/neko.js`
+4. Outputs a single file to `docs/neko.js`
 
 ## Development
 
@@ -143,8 +147,9 @@ nekojs/
 ├── src/
 │   └── neko.js          # Main JavaScript implementation
 ├── docs/
-│   ├── index.html       # Demo and documentation page
+│   ├── index.md         # GitHub Pages landing page
 │   └── neko.js          # Built bundle (generated)
+├── nkosrc4/             # Original Neko98 source (reference)
 ├── build.py             # Build script
 ├── README.md
 └── LICENSE.md
@@ -156,36 +161,27 @@ This JavaScript version faithfully recreates the original Neko98 behavior:
 
 - **18 animation states** - Stop, Wash, Scratch, Yawn, Sleep, Awake, 8 directional movements, 4 directional clawing
 - **State machine** - Transitions between idle animations (Stop → Wash → Scratch → Yawn → Sleep)
-- **5 behavior modes** - Various movement patterns
+- **5 behavior modes** - Chase mouse, run away, random, pace, and ball-chasing
 - **Boundary detection** - Claws at screen edges when blocked
-- **Smooth animation** - 10fps update rate matching the original
+- **Smooth animation** - 120fps rendering with 5fps logic tick (matching original timing)
 
 ## Credits
 
-### Original Neko
-
 - **Original Neko:** Masayuki Koba (X-Windows version)
 - **Windows Port:** David Harvey (1998) - Neko98
-- **Source:** Downloaded from [web.archive.org](https://web.archive.org/web/20050330224958fw_/http://www.angelfire.com/ct/neko/download.html)
+- **JavaScript Implementation:** Louis Abraham (2025)
+- **Source:** Original code from [web.archive.org](https://web.archive.org/web/20050330224958fw_/http://www.angelfire.com/ct/neko/download.html)
 
-### This JavaScript Implementation
+## How This Project Was Made
 
-**This entire project was generated by AI (Claude Sonnet 4.5) from prompts!**
+This project was originally created through AI-assisted "vibe coding" with Claude, then refined with manual improvements.
 
-After downloading and decompressing the original `nkosrc4` source and converting `classes.doc` to `classes.txt`, the project was created through AI-assisted development.
+### Initial AI Generation
 
-**Generation Statistics:**
-- Total cost: $2.07
-- API time: 11m 27s
-- Wall time: 26m 49s
-- Code changes: 1,554 lines added, 51 lines removed
-- Model: Claude Sonnet 4.5 (primary), with Haiku for exploration tasks
-- Note: Using the most expensive model (Opus 4.5) without prompt caching optimization
+The first version was generated by Claude Sonnet 4 from the original Neko98 C++ source code using four prompts:
 
 <details>
 <summary><strong>Prompt 1: Initial Implementation</strong></summary>
-
-This first prompt created the entire initial implementation:
 
 ```
 I want to build a modern web version of neko.
@@ -214,7 +210,7 @@ You should use git and commit regularly. Don't commit the original source.
 <details>
 <summary><strong>Prompt 2: Bug Fix (Sprite Mapping)</strong></summary>
 
-After the initial implementation, there was a bug where diagonal movements showed incorrect sprites. The user provided two screenshots showing Neko displaying the wrong sprites for up-left and down-left movements, along with this prompt:
+After the initial implementation, diagonal movements showed incorrect sprites. Two screenshots were provided showing the bug:
 
 ```
 There is a bug in the movement handling, it is supposed to go up left in the first
@@ -222,19 +218,10 @@ image and down left in the second. Think to identify the source of the bug and c
 the logic of all sprite indexing.
 ```
 
-The AI identified and fixed three issues:
-1. Wrong sprite order in build.py (using Upright sprites for down movement)
-2. Missing diagonal sprites (reusing cardinal directions instead of proper diagonals)
-3. Wrong claw sprites (using downright sprites for down claw)
-
-The fix properly mapped all 32 sprites from the original Neko98, including dedicated sprites for all 8 movement directions.
-
 </details>
 
 <details>
 <summary><strong>Prompt 3: Documentation Update</strong></summary>
-
-Final prompt to document the complete creation process:
 
 ```
 Finally update README.md and index.html to document the previous error and the
@@ -254,9 +241,7 @@ claude-sonnet: 146 input, 24.5k output, 1.8m cache read, 100.2k cache write ($1.
 </details>
 
 <details>
-<summary><strong>Prompt 4: GitHub Integration and Final Stats</strong></summary>
-
-After configuring the GitHub remote, final prompt to update links and document final statistics:
+<summary><strong>Prompt 4: GitHub Integration</strong></summary>
 
 ```
 I have now configured the github remote. Update the links where suitable. Don't
@@ -275,33 +260,23 @@ I'm also using the most expensive Claude Opus 4.5 model.
 Commit and push your changes.
 ```
 
-This prompt updated all GitHub links to point to `louisabraham/nekojs` and documented the complete generation cost including the conversation overhead from not compacting prompts.
-
 </details>
 
-### What the AI Did
+### Manual Improvements
 
-1. Explored and analyzed the original C++ source code (26 files)
-2. Documented the complete architecture and behavior (18 states, 5 modes)
-3. Reimplemented the state machine in JavaScript with proper physics
-4. Created a Python build system to convert ICO sprites to base64 PNG
-5. Generated comprehensive documentation (README, LICENSE, demo page)
-6. Set up the GitHub Pages deployment structure
-7. Identified and fixed sprite mapping bugs through visual debugging
-8. Documented the entire creation process transparently
+After the initial AI generation, significant work with a human in the loop was done to fix bugs and add features:
+
+- **Rewrote movement system** - Complete rewrite for more realistic movement matching the original C++ implementation for state changes and animation timing while allowing for smooth movement at **higher** FPS.
+- **Fixed wall clawing bug** - Movement deltas were floating-point causing direction flickering that reset state counters; converted to integers like original C++
+- **Fixed boundary detection** - Changed from `window.innerWidth` to `document.documentElement.clientWidth` to exclude scrollbars
+- **Added click-to-change behavior** - Click on Neko to cycle through all 5 behavior modes
+- **Fixed click detection** - Changed from `click` to `mousedown` event so clicks register even when cat is moving
 
 ## License
 
 This JavaScript implementation is licensed under **GNU General Public License v3.0**, respecting the original Neko license.
 
-The original Neko98 source code carries multiple licenses:
-- Core behavior (Neko.h/cpp, Neko98.h/cpp): GNU GPL
-- Pet class hierarchy: Commercial use requires 20% profit share or $1000 to original author
-- Other files: Free to use with credit
-
-Since this is a non-commercial web implementation of the core behavior only, it falls under the GNU GPL license.
-
-See [LICENSE.md](LICENSE.md) for full license text and original credits.
+See [LICENSE.md](LICENSE.md) for full details.
 
 ## Browser Support
 
@@ -309,20 +284,11 @@ See [LICENSE.md](LICENSE.md) for full license text and original credits.
 - ✅ Firefox (latest)
 - ✅ Safari (latest)
 - ✅ Opera (latest)
-- ⚠️ IE11 (requires polyfills)
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit issues or pull requests.
 
-## Acknowledgments
-
-Special thanks to:
-- **Masayuki Koba** for creating the original Neko
-- **David Harvey** for the Windows 95/98 port and detailed documentation
-- The Internet Archive for preserving the original source code
-- The retro computing community for keeping these classics alive
-
 ---
 
-Made with 💜 by Claude AI | [View Demo](https://louisabraham.github.io/nekojs/)
+[View Demo](https://louisabraham.github.io/nekojs/) | [GitHub](https://github.com/louisabraham/nekojs)
