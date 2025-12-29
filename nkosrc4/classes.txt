@@ -1,0 +1,196 @@
+Pet Class Hierarchy Documentation
+
+Copyright Information
+The Pet class hierarchy is (C) David Harvey 1998.
+
+
+Introduction
+This document describes the pet class hierarchy used by Neko98. If you’d like to use these classes in your own software, make sure you read the license.txt file first.
+
+
+Class Hierarchy
+
+
+
+CDesktopHack
+
+Description:
+This class can be used to gain access to the Windows Desktop’s window handle (HWND)
+
+Interface:
+HWND m_hWndDesktop - window handle of desktop
+BOOL m_fActiveDesktop - flag to indicate whether the user has an active desktop installed
+void FindDesktopHandle() - this function recalculates the handle of the desktop.
+void GetDesktopRect( RECT& rcDesktop ) - this function retrieves the size of the currently visible desktop area.
+
+Notes:
+It is not necessary to call FindDesktopHandle() when the class is first used. However, if explorer crashes or the user changes their active desktop settings, the current handle will become invalid. It is recommended that this function is called roughly once every thirty seconds. It is not possible to use IsWindow() to tell if the handle is valid or not because the active desktop sits over the top of the non-active desktop, so if the user switches on the active desktop, the old desktop will still exist underneath.
+
+
+CPet
+
+Description:
+This is the abstract base class for CAlwaysOnTopPet and CDesktopPet. You cannot create one directly.
+
+Interface:
+void MoveTo( int x, int y ) - moves the pet to the specified location
+void SetImage( int nImageIndex ) - changes the currently displayed frame
+void SetImageAndMoveTo( int nImageIndex, int x, int y ) - moves the pet to the specified location and changes its image. This is an atomic encapsulation of MoveTo() and SetImage() and should be used when both the image and position of the pet have changed.
+void SetImages( HICON hIconTable[], int nNumberOfIcons ) - sets the images to be used by the pet. The class creates duplicates of each icon in the table for its own use.
+void SetScale( float fScale ) - sets the scale factor for the pet. 1.0 is normal, 2.0 is double size etc.
+RECT GetBoundsRect() - this retrieves the current boundaries for the pet. This depends on the subclass used.
+POINT GetOldPosition() - this retrieves the coordinates where the pet was last.
+POINT GetPosition() - this retrieves the current position of the pet.
+SIZE GetSize() - this retrieves the size of the pet.
+
+Overridable Functions:
+You don’t need to override these unless you are creating a new subclass of CPet directly.
+void Draw( int nImageIndex ) - this function needs to implement the drawing of the given frame.
+void Erase() - this function needs to implement the erasing of the pet.
+
+Notes:
+None.
+
+CAlwaysOnTopPet
+
+Description:
+This specialisation of CPet provides the functionality to create an animated window that runs on top of other windows.
+
+Interface:
+In addition to those in the base class, the following interfaces are available:
+BOOL IsDragging() - this function will indicate whether the pet is being dragged by the user.
+
+Overridable Functions:
+void OnLButtonDown()
+void OnLButtonUp()
+void OnLButtonDblClk()
+void OnMButtonDown()
+void OnMButtonUp()
+void OnMButtonDblClk()
+void OnRButtonDown()
+void OnRButtonUp()
+void OnRButtonDblClk()
+all these functions can be overridden to get information on when the user clicks on the window.
+
+Notes:
+In the default implementation of CAlwaysOnTopPet, OnLButtonDown() causes the pet to be dragged, and OnLButtonUp() is disabled. If you override OnLButtonDown(), you must call the base class [ CAlwaysOnTopPet::OnLButtonDown(); ] in order to maintain the dragging abilities of the class.
+It is recommended, however, that only the right-button functions are overridden.
+If you are going to use CPet::SetScale(), you should call it before calling SetImages() because CAlwaysOnTopPet::SetImages() needs an up to date version of the pet scale.
+
+CDesktopPet
+
+Description:
+This specialisation of CPet provides the functionality to create an animated sprite that is drawn on the system desktop.
+
+Interface:
+There is no special interface for this other than those in CPet and CDesktopHack.
+
+Notes:
+See the discussion about calling FindDesktopHandle() in the notes section of CDesktopHack, above.
+
+
+
+Using The Pet Class Hierarchy - Method One (simple)
+This method differs from the way that Neko uses the class hierarchy.
+
+Steps:
+1. Subclass either CAlwaysOnTopPet or CDesktopPet to create a new class…
+
+class MyPet : public CDesktopPet {
+    ...
+}
+
+2. Load your icons into an array of HICONs…
+
+HICON hIcons[10];
+hIcons[0] = LoadIcon( hInstance, IDI_ICON1 );
+...
+
+3. Call SetImages()…
+
+SetImages( hIcons, 10 );
+
+4. Delete the icons…
+
+for( i = 0; i < 10; i++ ) DestroyIcon( hIcons[i] );
+
+5. Call SetImage(), MoveTo() and/or SetImageAndMoveTo() to change how it is displayed. The example below is not complete, but it should give you a rough idea.
+
+//get current position
+int x = GetPosition().x, y = GetPosition().y;
+
+//move
+x += dx;
+y += dy;
+
+//update animation
+frame++;
+if( frame >= 10 ) frame = 0;
+
+//update the sprite
+SetImageAndMoveTo( frame, x, y );
+
+
+…this should be all you need to create a simple sprite that moves around.
+
+
+Using The Pet Class Hierarchy - Method Two (slightly nastier)
+This method is the method used by Neko, and allows you to create either a desktop-based sprite or an always on top sprite dynamically.
+
+Steps:
+1. Create a new class and add a member variable of type pointer to CPet…
+
+class MyPet {
+
+protected:
+    CPet* m_pPet;
+}
+
+2. When you’ve loaded your configuration, create either a CDesktopPet or CalwaysOnTop pet class and store it in the pointer…
+
+if( fAlwaysOnTop == TRUE )
+    m_pPet = new CAlwaysOnTopPet();
+else
+    m_pPet = new CDesktopPet();
+
+3. Load your icons into an array of HICONs…
+
+HICON hIcons[10];
+hIcons[0] = LoadIcon( hInstance, IDI_ICON1 );
+...
+
+4. Call the SetImages() member function on the CPet pointer…
+
+m_pPet->SetImages( hIcons, 10 );
+
+5. Delete the icons…
+
+for( i = 0; i < 10; i++ ) DestroyIcon( hIcons[i] );
+
+6. Add a line in your classes destructor to delete the pet class…
+
+MyPet::~MyPet()
+{
+    ...
+    delete m_pPet;
+}
+
+7. Call SetImage(), MoveTo() and/or SetImageAndMoveTo() on the CPet pointer to change how it is displayed. The example below is not complete, but it should give you a rough idea.
+
+//get current position
+int x = m_pPet->GetPosition().x, y = m_pPet->GetPosition().y;
+
+//move
+x += dx;
+y += dy;
+
+//update animation
+frame++;
+if( frame >= 10 ) frame = 0;
+
+//update the sprite
+m_pPet->SetImageAndMoveTo( frame, x, y );
+
+
+This method is more advanced and although it is less tidy, it does allow you to choose whether you want your sprite on top or on the desktop.
+
