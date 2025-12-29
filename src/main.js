@@ -169,6 +169,8 @@
         this.element.addEventListener("mousedown", (e) => {
           e.stopPropagation();
           e.preventDefault(); // Prevent text selection
+          // Make cat appear surprised/awake
+          this.setState(NekoState.AWAKE);
           this.cycleBehavior();
         });
       }
