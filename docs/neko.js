@@ -123,9 +123,9 @@
       this.moveDX = 0;
       this.moveDY = 0;
 
-      // Bounds
-      this.boundsWidth = window.innerWidth - SPRITE_SIZE;
-      this.boundsHeight = window.innerHeight - SPRITE_SIZE;
+      // Bounds - use documentElement.clientWidth to exclude scrollbar
+      this.boundsWidth = document.documentElement.clientWidth - SPRITE_SIZE;
+      this.boundsHeight = document.documentElement.clientHeight - SPRITE_SIZE;
 
       // Mouse tracking - null until first mouse event
       // This prevents neko from running somewhere before user moves mouse
@@ -136,6 +136,7 @@
       // DOM element
       this.element = null;
       this.spriteImages = [];
+      this.allowBehaviorChange = options.allowBehaviorChange !== false; // Default true
 
       // Animation lookup table (maps state to sprite indices)
       // Format: [frame1_index, frame2_index]
@@ -180,7 +181,8 @@
       this.element.style.width = SPRITE_SIZE + "px";
       this.element.style.height = SPRITE_SIZE + "px";
       this.element.style.imageRendering = "pixelated";
-      this.element.style.pointerEvents = "none";
+      this.element.style.pointerEvents = this.allowBehaviorChange ? "auto" : "none";
+      this.element.style.cursor = this.allowBehaviorChange ? "pointer" : "default";
       this.element.style.zIndex = "999999";
       this.element.style.left = this.x + "px";
       this.element.style.top = this.y + "px";
@@ -193,6 +195,14 @@
 
       document.body.appendChild(this.element);
 
+      // Click to cycle through behaviors
+      if (this.allowBehaviorChange) {
+        this.element.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this.cycleBehavior();
+        });
+      }
+
       // Track mouse position - set flag on first move
       document.addEventListener("mousemove", (e) => {
         this.mouseX = e.clientX;
@@ -202,8 +212,8 @@
 
       // Update bounds on resize
       window.addEventListener("resize", () => {
-        this.boundsWidth = window.innerWidth - SPRITE_SIZE;
-        this.boundsHeight = window.innerHeight - SPRITE_SIZE;
+        this.boundsWidth = document.documentElement.clientWidth - SPRITE_SIZE;
+        this.boundsHeight = document.documentElement.clientHeight - SPRITE_SIZE;
       });
 
       // Random starting position
@@ -489,15 +499,17 @@
 
       // Calculate movement delta (like original m_nDX, m_nDY)
       // Store as instance variables so they persist across ticks
+      // IMPORTANT: Use integers like original to prevent direction flickering
+      // which causes state resets and prevents wall clawing
       if (distance !== 0) {
         if (distance <= this.speed) {
           // Less than top speed - jump the gap
-          this.moveDX = dx;
-          this.moveDY = dy;
+          this.moveDX = Math.trunc(dx);
+          this.moveDY = Math.trunc(dy);
         } else {
           // More than top speed - run at top speed
-          this.moveDX = (this.speed * dx) / distance;
-          this.moveDY = (this.speed * dy) / distance;
+          this.moveDX = Math.trunc((this.speed * dx) / distance);
+          this.moveDY = Math.trunc((this.speed * dy) / distance);
         }
       } else {
         this.moveDX = 0;
@@ -680,6 +692,35 @@
         this.state === NekoState.SLEEP ||
         this.state === NekoState.AWAKE
       );
+    }
+
+    cycleBehavior() {
+      // Cycle through behaviors: Chase -> Run Away -> Random -> Pace -> Run Around -> back to Chase
+      const behaviors = [
+        BehaviorMode.CHASE_MOUSE,
+        BehaviorMode.RUN_AWAY_FROM_MOUSE,
+        BehaviorMode.RUN_AROUND_RANDOMLY,
+        BehaviorMode.PACE_AROUND_SCREEN,
+        BehaviorMode.RUN_AROUND,
+      ];
+      const currentIndex = behaviors.indexOf(this.behaviorMode);
+      const nextIndex = (currentIndex + 1) % behaviors.length;
+      this.behaviorMode = behaviors[nextIndex];
+
+      // Reset state to wake the cat up if sleeping
+      if (this.state === NekoState.SLEEP) {
+        this.setState(NekoState.AWAKE);
+      }
+
+      // Show behavior name (optional - can be removed if you don't want this)
+      const behaviorNames = [
+        "Chase Mouse",
+        "Run Away From Mouse",
+        "Run Around Randomly",
+        "Pace Around Screen",
+        "Run Around",
+      ];
+      console.log(`Neko behavior: ${behaviorNames[nextIndex]}`);
     }
 
     destroy() {
