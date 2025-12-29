@@ -1,10 +1,10 @@
 /**
  * Neko.js - Bundled version
+ * Copyright (C) 2025 Louis Abraham
  * 
  * Based on Neko98 by David Harvey (1998)
  * Original Neko by Masayuki Koba
  * 
- * This JavaScript implementation created by AI (Claude) from original C++ source
  * Licensed under GPL v3 (see LICENSE.md)
  */
 

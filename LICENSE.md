@@ -2,7 +2,7 @@
 
 ## Neko.js JavaScript Implementation
 
-Copyright (C) 2025 - AI Generated Code
+Copyright (C) 2025 Louis Abraham
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ England
 
 - **Original Neko (X-Windows):** Masayuki Koba
 - **Windows 95/98 Port (Neko98):** David Harvey (1998)
-- **JavaScript Web Implementation:** AI-generated code by Claude (Anthropic)
+- **JavaScript Web Implementation:** Louis Abraham (2025), with AI assistance from Claude (Anthropic)
 
 ### Source Code Origin
 

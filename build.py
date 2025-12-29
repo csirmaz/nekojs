@@ -114,11 +114,11 @@ def build():
     output = []
     output.append('/**')
     output.append(' * Neko.js - Bundled version')
+    output.append(' * Copyright (C) 2025 Louis Abraham')
     output.append(' * ')
     output.append(' * Based on Neko98 by David Harvey (1998)')
     output.append(' * Original Neko by Masayuki Koba')
     output.append(' * ')
-    output.append(' * This JavaScript implementation created by AI (Claude) from original C++ source')
     output.append(' * Licensed under GPL v3 (see LICENSE.md)')
     output.append(' */')
     output.append('')
