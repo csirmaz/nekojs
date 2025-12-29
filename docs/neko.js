@@ -93,7 +93,7 @@
   class Neko {
     constructor(options = {}) {
       // Configuration
-      this.fps = options.fps || 30; // Target FPS (default 30 for smooth movement)
+      this.fps = options.fps || 120; // Target FPS (default 120 for smooth movement)
       // Original used 16 pixels/tick for 640x480 screens (~2.5% of width)
       // Modern screens are ~3x larger, so default to 32 for similar feel
       this.speed = options.speed || 24;
