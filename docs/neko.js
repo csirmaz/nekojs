@@ -196,9 +196,12 @@
       document.body.appendChild(this.element);
 
       // Click to cycle through behaviors
+      // Use mousedown instead of click - click requires mouseup on same element,
+      // which fails if the cat moves between mousedown and mouseup
       if (this.allowBehaviorChange) {
-        this.element.addEventListener("click", (e) => {
+        this.element.addEventListener("mousedown", (e) => {
           e.stopPropagation();
+          e.preventDefault(); // Prevent text selection
           this.cycleBehavior();
         });
       }
