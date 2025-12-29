@@ -5,7 +5,8 @@ layout: default
 <script src="neko.js" data-autostart></script>
 
 <style>
-.content h1:first-of-type img {
+/* Hide README icon since we have our own in the header */
+.content .readme-neko-icon {
     display: none;
 }
 </style>

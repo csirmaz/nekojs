@@ -1,4 +1,4 @@
-# <img src="nkosrc4/Neko98/Res/Awake.ico" width="32" alt="Neko" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;"> Neko.js
+# <img src="nkosrc4/Neko98/Res/Awake.ico" width="32" alt="Neko" class="readme-neko-icon" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;"> Neko.js
 
 A JavaScript implementation of the classic Neko desktop pet for the web.
 
