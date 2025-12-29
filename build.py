@@ -109,85 +109,76 @@ def build():
     print('Reading JavaScript source...')
     js_source = (src_dir / 'neko.js').read_text()
 
-    # Create bundled output
-    print('Creating bundle...')
-    output = []
-    output.append('/**')
-    output.append(' * Neko.js - Bundled version')
-    output.append(' * Copyright (C) 2025 Louis Abraham')
-    output.append(' * ')
-    output.append(' * Based on Neko98 by David Harvey (1998)')
-    output.append(' * Original Neko by Masayuki Koba')
-    output.append(' * ')
-    output.append(' * Licensed under GPL v3 (see LICENSE.md)')
-    output.append(' */')
-    output.append('')
-    output.append('(function() {')
-    output.append('    "use strict";')
-    output.append('')
-    output.append('    // Embedded sprite data (base64-encoded)')
-    output.append('    const NEKO_SPRITES = [')
-
-    for i, sprite_data in enumerate(sprites_b64):
-        comma = ',' if i < len(sprites_b64) - 1 else ''
-        if sprite_data:
-            output.append(f'        "{sprite_data}"{comma}')
-        else:
-            output.append(f'        ""{comma}')
-
-    output.append('    ];')
-    output.append('')
-
-    # Extract the main code (remove IIFE wrapper and auto-start)
+    # Extract the main code (remove IIFE wrapper)
     lines = js_source.split('\n')
     in_code = False
     code_lines = []
 
     for line in lines:
         stripped = line.strip()
-        # Match IIFE opening with flexible whitespace: (function() or (function ()
         if stripped.startswith('(function') and '{' in stripped:
             in_code = True
             continue
-        # Match IIFE closing: })(); or }());
         elif stripped in ["})();", "}());"]:
             in_code = False
             continue
         elif in_code:
-            # Skip the 'use strict' since we already added it
             if stripped == "'use strict';" or stripped == '"use strict";':
                 continue
             code_lines.append(line)
 
-    # Add the code
-    output.extend(code_lines)
+    # Format sprites array and code
+    sprites_js = ',\n        '.join(f'"{s}"' if s else '""' for s in sprites_b64)
+    code_js = '\n'.join(code_lines)
 
-    # Add initialization code
-    output.append('')
-    output.append('    // Auto-initialize function')
-    output.append('    window.createNeko = function(options) {')
-    output.append('        const neko = new Neko(options);')
-    output.append('        neko.setSprites(NEKO_SPRITES);')
-    output.append('        neko.start();')
-    output.append('        return neko;')
-    output.append('    };')
-    output.append('')
-    output.append('    // Auto-start if script has data-autostart attribute')
-    output.append('    if (document.currentScript && document.currentScript.hasAttribute("data-autostart")) {')
-    output.append('        if (document.readyState === "loading") {')
-    output.append('            document.addEventListener("DOMContentLoaded", function() {')
-    output.append('                window.neko = createNeko();')
-    output.append('            });')
-    output.append('        } else {')
-    output.append('            window.neko = createNeko();')
-    output.append('        }')
-    output.append('    }')
-    output.append('})();')
+    # Create bundled output using template
+    print('Creating bundle...')
+    template = f'''\
+/**
+ * Neko.js - Bundled version
+ * Copyright (C) 2025 Louis Abraham
+ *
+ * Based on Neko98 by David Harvey (1998)
+ * Original Neko by Masayuki Koba
+ *
+ * Licensed under GPL v3 (see LICENSE.md)
+ */
+
+(function() {{
+    "use strict";
+
+    // Embedded sprite data (base64-encoded)
+    const NEKO_SPRITES = [
+        {sprites_js}
+    ];
+
+{code_js}
+
+    // Auto-initialize function
+    window.createNeko = function(options) {{
+        const neko = new Neko(options);
+        neko.setSprites(NEKO_SPRITES);
+        neko.start();
+        return neko;
+    }};
+
+    // Auto-start if script has data-autostart attribute
+    if (document.currentScript && document.currentScript.hasAttribute("data-autostart")) {{
+        if (document.readyState === "loading") {{
+            document.addEventListener("DOMContentLoaded", function() {{
+                window.neko = createNeko();
+            }});
+        }} else {{
+            window.neko = createNeko();
+        }}
+    }}
+}})();
+'''
 
     # Write output
     output_path = docs_dir / 'neko.js'
     print(f'Writing to {output_path}...')
-    output_path.write_text('\n'.join(output))
+    output_path.write_text(template)
 
     # Get file size
     size_kb = output_path.stat().st_size / 1024

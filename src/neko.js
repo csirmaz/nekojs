@@ -704,15 +704,4 @@
   window.Neko = Neko;
   window.NekoState = NekoState;
   window.BehaviorMode = BehaviorMode;
-
-  // Auto-start if data-autostart is present
-  if (
-    document.currentScript &&
-    document.currentScript.hasAttribute("data-autostart")
-  ) {
-    window.addEventListener("DOMContentLoaded", () => {
-      window.neko = new Neko();
-      window.neko.start();
-    });
-  }
 })();
