@@ -1,12 +1,19 @@
 # <img src="nkosrc4/Neko98/Res/Awake.ico" width="32" alt="Neko" class="readme-neko-icon" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;"> Neko.js
 
-A JavaScript implementation of the classic Neko desktop pet for the web.
+A JavaScript reimplementation of the classic Neko desktop pet for the web.
 
-[**Live Demo**](https://louisabraham.github.io/nekojs/) | [Installation](#installation) | [API](#api)
+[**Live Demo**](https://louisabraham.github.io/nekojs/) | [Usage](#usage)
 
 ## About
 
-Neko is a classic desktop pet that follows your mouse cursor around the screen. Originally created by **Masayuki Koba** for X-Windows and ported to Windows 95/98 by **David Harvey** in 1998, this JavaScript version brings the **beloved** cat to modern web browsers.
+[Neko](https://en.wikipedia.org/wiki/Neko_(software)) is a classic desktop pet that follows your mouse cursor around the screen. This JavaScript version brings the cat to web pages.
+
+It should also be possible to build a browser extension that adds a Neko to all pages and keeps its position consistent across pages, and this would be a welcome addition.
+
+The original goal of this recreation was to test the capabilities of Claude Code (Sonnet 4.5) and to see how well it could recreate the original Neko98 behavior with just the original source code and a few prompts. However, some manual improvements were needed. Read more about the creation process [below](#how-this-project-was-made).
+
+The original source code (in the `nkosrc4/` folder) was downloaded from [web.archive.org](https://web.archive.org/web/20050330224958fw_/http://www.angelfire.com/ct/neko/download.html).
+
 
 ### Features
 
@@ -14,163 +21,37 @@ Neko is a classic desktop pet that follows your mouse cursor around the screen. 
 - 💤 **Idle animations** - Falls asleep when you stop moving
 - 🐾 **Faithful recreation** - Matches original Neko98 state machine and behavior
 - 🎨 **Pixel-perfect** - Uses original 32x32 pixel sprites
-- ⚡ **Lightweight** - Only ~38KB uncompressed with sprites embedded (brotli compressed to ~14KB)
+- ⚡ **Lightweight** - ~38KB uncompressed with sprites embedded (brotli compressed to ~14KB)
 - 🚀 **Zero dependencies** - Pure vanilla JavaScript
 - 🖱️ **Interactive** - Click to change behavior modes
 
-## Installation
+## Usage
 
-### Quick Start (Auto-start)
-
-Add this single line to your HTML to automatically start Neko:
+Add to your HTML:
 
 ```html
 <script src="https://louisabraham.github.io/nekojs/neko.js" data-autostart></script>
 ```
 
-### Manual Control
-
-For more control over initialization:
-
-```html
-<script src="https://louisabraham.github.io/nekojs/neko.js"></script>
-<script>
-  // Create and start Neko with custom options
-  const neko = createNeko({
-    speed: 24,              // Pixels per logic tick at 5 ticks/sec (default: 24)
-    behaviorMode: 0,        // 0 = chase mouse (see Behavior Modes below)
-    idleThreshold: 6        // Distance threshold to consider idle (default: 6)
-  });
-</script>
-```
-
-### Local Installation
-
-Download [`neko.js`](https://louisabraham.github.io/nekojs/neko.js) directly or build from source:
-
-```bash
-git clone https://github.com/louisabraham/nekojs.git
-cd nekojs
-python3 build.py
-```
-
-Then include the generated `docs/neko.js` in your project.
-
-## API
-
-### Creating Neko
-
-```javascript
-const neko = createNeko(options);
-```
-
-**Options:**
-- `speed` (number, default: 24) - Movement speed in pixels per logic tick (5 ticks/second)
-- `fps` (number, default: 120) - Render frame rate for smooth interpolation
-- `behaviorMode` (number, default: 0) - Behavior pattern (see below)
-- `idleThreshold` (number, default: 6) - Distance threshold for idle detection
-- `allowBehaviorChange` (boolean, default: true) - Allow clicking Neko to cycle behaviors
-- `startX` (number) - Initial X position
-- `startY` (number) - Initial Y position
-
-### Interactive Mode
-
-**Click on Neko to change its behavior!** By default, clicking the cat cycles through all behavior modes. You can disable this:
+Or with custom options:
 
 ```javascript
 const neko = createNeko({
-  allowBehaviorChange: false  // Disable click-to-change
+  speed: 24,                 // Pixels per logic tick (default: 24, 5 ticks/sec)
+  fps: 120,                  // Render frame rate (default: 120)
+  behaviorMode: 0,           // 0=chase, 1=run away, 2=random, 3=pace, 4=ball chase
+  idleThreshold: 6,          // Distance to consider idle (default: 6)
+  allowBehaviorChange: true, // Click to cycle behaviors (default: true)
+  startX: 0,                 // Initial X position (default: 0)
+  startY: 0                  // Initial Y position (default: 0)
 });
+
+neko.start();
+neko.stop();
+neko.destroy();
 ```
 
-### Behavior Modes
-
-```javascript
-neko.behaviorMode = 0;  // Chase Mouse (default)
-neko.behaviorMode = 1;  // Run Away From Mouse
-neko.behaviorMode = 2;  // Run Around Randomly
-neko.behaviorMode = 3;  // Pace Around Screen
-neko.behaviorMode = 4;  // Run Around (chase invisible ball)
-```
-
-### Methods
-
-```javascript
-neko.start();          // Start the animation loop
-neko.stop();           // Stop the animation loop
-neko.destroy();        // Remove Neko from the page
-neko.cycleBehavior();  // Manually cycle to next behavior
-```
-
-### Properties
-
-```javascript
-neko.x            // Current X position
-neko.y            // Current Y position
-neko.state        // Current animation state
-neko.running      // Whether animation is running
-neko.behaviorMode // Current behavior mode
-```
-
-## Building from Source
-
-### Prerequisites
-
-- Python 3.6+
-- Pillow (PIL) library: `pip3 install Pillow`
-
-### Build Process
-
-```bash
-# Clone the repository
-git clone https://github.com/louisabraham/nekojs.git
-cd nekojs
-
-# Run the build script
-python3 build.py
-
-# Output will be generated at docs/neko.js
-```
-
-The build script:
-1. Converts ICO sprites from the original Neko98 to PNG
-2. Encodes sprites as base64 data URIs
-3. Bundles sprites with JavaScript code
-4. Outputs a single file to `docs/neko.js`
-
-## Development
-
-### Project Structure
-
-```
-nekojs/
-├── src/
-│   └── neko.js          # Main JavaScript implementation
-├── docs/
-│   ├── index.md         # GitHub Pages landing page
-│   └── neko.js          # Built bundle (generated)
-├── nkosrc4/             # Original Neko98 source (reference)
-├── build.py             # Build script
-├── README.md
-└── LICENSE.md
-```
-
-### Implementation Details
-
-This JavaScript version faithfully recreates the original Neko98 behavior:
-
-- **18 animation states** - Stop, Wash, Scratch, Yawn, Sleep, Awake, 8 directional movements, 4 directional clawing
-- **State machine** - Transitions between idle animations (Stop → Wash → Scratch → Yawn → Sleep)
-- **5 behavior modes** - Chase mouse, run away, random, pace, and ball-chasing
-- **Boundary detection** - Claws at screen edges when blocked
-- **Smooth animation** - 120fps rendering with 5fps logic tick (matching original timing)
-
-## Credits
-
-- **Original Neko:** Masayuki Koba (X-Windows version)
-- **Windows Port:** David Harvey (1998) - Neko98
-- **JavaScript Implementation:** Louis Abraham (2025)
-- **Source:** Original code from [web.archive.org](https://web.archive.org/web/20050330224958fw_/http://www.angelfire.com/ct/neko/download.html)
+To _build_ (actually just package the sprites), run `python3 build.py` (requires Pillow).
 
 ## How This Project Was Made
 
@@ -266,11 +147,11 @@ Commit and push your changes.
 
 The plan was to try to let the AI fully implement the project, but it was not able to do so.
 
-After the initial AI generation, significant work with a human in the loop was done to fix bugs and add features:
+After the initial AI generation, significant work with a human in the loop (aka me) was done to fix bugs and add features:
 
-- **Rewrote movement system** - Complete rewrite for more realistic movement matching the original C++ implementation for state changes and animation timing while allowing for smooth movement at **higher** FPS.
+- **Rewrote movement system** - Complete rewrite for more realistic movement matching the original C++ implementation for state changes and animation timing while allowing for smooth movement at higher FPS.
 - **Fixed wall clawing bug** - Movement deltas were floating-point causing direction flickering that reset state counters; converted to integers like original C++
-- **Fixed boundary detection** - Changed from `window.innerWidth` to `document.documentElement.clientWidth` to exclude scrollbars
+- **Fixed boundary detection to exclude scrollbars**
 - **Added click-to-change behavior** - Click on Neko to cycle through all 5 behavior modes
 - **Fixed click detection** - Changed from `click` to `mousedown` event so clicks register even when cat is moving
 
@@ -279,18 +160,3 @@ After the initial AI generation, significant work with a human in the loop was d
 This JavaScript implementation is licensed under **GNU General Public License v3.0**, respecting the original Neko license.
 
 See [LICENSE.md](LICENSE.md) for full details.
-
-## Browser Support
-
-- ✅ Chrome/Edge (latest)
-- ✅ Firefox (latest)
-- ✅ Safari (latest)
-- ✅ Opera (latest)
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit issues or pull requests.
-
----
-
-[View Demo](https://louisabraham.github.io/nekojs/) | [GitHub](https://github.com/louisabraham/nekojs)
