@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neko.js - Desktop Pet for the Web</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            padding: 3rem 0;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        h3 {
+            color: #764ba2;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        pre {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        code {
+            background: #f5f5f5;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .demo-section {
+            text-align: center;
+            padding: 2rem;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .button {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .button:hover {
+            background: #5568d3;
+        }
+
+        .button.secondary {
+            background: #764ba2;
+        }
+
+        .button.secondary:hover {
+            background: #63408a;
+        }
+
+        ul {
+            margin-left: 2rem;
+            margin-top: 0.5rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .feature {
+            padding: 1rem;
+            background: #f9f9f9;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 2rem;
+            opacity: 0.9;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .credits {
+            background: #f0f0f0;
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .prompt-section {
+            background: #fff9e6;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐱 Neko.js</h1>
+            <p class="tagline">A Desktop Pet for the Web</p>
+        </header>
+
+        <div class="card">
+            <h2>About Neko</h2>
+            <p>
+                Neko is a classic desktop pet that follows your mouse cursor around the screen.
+                Originally created by <strong>Masayuki Koba</strong> for X-Windows and ported to Windows 95/98
+                by <strong>David Harvey</strong> in 1998, this JavaScript version brings the beloved cat to modern web browsers.
+            </p>
+
+            <div class="demo-section">
+                <p><strong>Try it now!</strong></p>
+                <button class="button" onclick="startNeko()">Start Neko</button>
+                <button class="button secondary" onclick="stopNeko()">Stop Neko</button>
+            </div>
+
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">🎯</div>
+                    <strong>Follows Cursor</strong>
+                    <p>Chases your mouse around</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">💤</div>
+                    <strong>Idle Animations</strong>
+                    <p>Falls asleep when idle</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🎨</div>
+                    <strong>Pixel Perfect</strong>
+                    <p>Original 32x32 sprites</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <strong>Lightweight</strong>
+                    <p>Only 28KB bundled</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Installation</h2>
+
+            <h3>Quick Start (Auto-start)</h3>
+            <p>Add this single line to your HTML to automatically start Neko:</p>
+            <pre><code>&lt;script src="https://yourusername.github.io/nekojs/neko.js" data-autostart&gt;&lt;/script&gt;</code></pre>
+
+            <h3>Manual Control</h3>
+            <p>For more control, initialize Neko programmatically:</p>
+            <pre><code>&lt;script src="https://yourusername.github.io/nekojs/neko.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+    // Create and start Neko
+    const neko = createNeko({
+        speed: 10,                    // Movement speed
+        behaviorMode: 0,              // 0 = chase mouse
+        idleThreshold: 8              // Distance to stop moving
+    });
+&lt;/script&gt;</code></pre>
+
+            <h3>Behavior Modes</h3>
+            <p>Neko supports different behavior patterns:</p>
+            <ul>
+                <li><code>0</code> - Chase Mouse (default)</li>
+                <li><code>1</code> - Run Away From Mouse</li>
+                <li><code>2</code> - Run Around Randomly</li>
+                <li><code>3</code> - Pace Around Screen</li>
+                <li><code>4</code> - Run Around (chase invisible ball)</li>
+            </ul>
+
+            <h3>API Methods</h3>
+            <pre><code>const neko = createNeko();
+neko.start();          // Start the animation loop
+neko.stop();           // Stop the animation loop
+neko.destroy();        // Remove from page
+neko.behaviorMode = 2; // Change behavior</code></pre>
+        </div>
+
+        <div class="card">
+            <h2>Credits</h2>
+
+            <div class="credits">
+                <strong>Original Neko:</strong> Masayuki Koba (X-Windows version)<br>
+                <strong>Windows Port:</strong> David Harvey (1998) - Neko98<br>
+                <strong>JavaScript Implementation:</strong> Created by AI (Claude) via automated conversion<br>
+                <strong>Source Code:</strong> Downloaded from
+                <a href="https://web.archive.org/web/20050330224958fw_/http://www.angelfire.com/ct/neko/download.html" target="_blank">
+                    web.archive.org
+                </a>
+            </div>
+
+            <div class="prompt-section">
+                <h3>🤖 AI-Generated Project</h3>
+                <p><strong>This entire project was generated by a single prompt to Claude!</strong></p>
+                <p>The original C++ source code (nkosrc4) was downloaded and decompressed, with <code>classes.doc</code>
+                converted to <code>classes.txt</code>. Everything else—exploration, analysis, JavaScript implementation,
+                build system, documentation, and this webpage—was created automatically from this prompt:</p>
+                <details>
+                    <summary><strong>Click to see the full prompt</strong></summary>
+                    <pre style="white-space: pre-wrap; margin-top: 1rem;"><code>I want to build a modern web version of neko.
+
+I put the original implementation of neko in @nkosrc4/
+
+Start by exploring the codebase and fully document what it does, then reimplement as much as possible in js.
+
+Implement a simple JS version. Avoid using any external libraries except if absolutely necessary. If there is a build step (probably mostly for minification), use a simple one.
+
+Use the orignal sprites from @nkosrc4/Neko98/Res/, add them to the build so that in the end one can just include a single js file that loads very fast (maybe it does network requests but it should be very fast). Maybe you can bundle or compress the sprites to make loading faster.
+
+I will serve the repository using github pages in a docs/ folder. The build process should output a single docs/neko.js file.
+
+Create a README.md file and a pretty looking docs/index.html to present the project. Properly credit the original code downloaded from https://web.archive.org/web/20050330224958fw_/http://www.angelfire.com/ct/neko/download.html. Include installation instructions in both.
+
+Create a simple LICENSE.md file that respects the original license of the code and credits the original author. If you can, put a modern GPL license on the JS code.
+
+Finally, the README.md and the index.html should include the fact that the code was produced fully by this prompt (after downloading and uncompressing nkosrc4 and converting some documentation `classes.doc` to `classes.txt`). Include the prompt verbatim.
+
+You should use git and commit regularly. Don't commit the original source.</code></pre>
+                </details>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>License</h2>
+            <p>
+                This JavaScript implementation is licensed under <strong>GNU General Public License v3.0</strong>,
+                respecting the original Neko license which requires GPL for the core behavior code.
+            </p>
+            <p>
+                See <a href="https://github.com/yourusername/nekojs/blob/main/LICENSE.md">LICENSE.md</a> for full details.
+            </p>
+        </div>
+
+        <footer>
+            <p>Made with 💜 by Claude AI |
+            <a href="https://github.com/yourusername/nekojs">View on GitHub</a></p>
+        </footer>
+    </div>
+
+    <script src="neko.js"></script>
+    <script>
+        let nekoInstance = null;
+
+        function startNeko() {
+            if (!nekoInstance) {
+                nekoInstance = createNeko();
+            } else if (!nekoInstance.running) {
+                nekoInstance.start();
+            }
+        }
+
+        function stopNeko() {
+            if (nekoInstance) {
+                nekoInstance.stop();
+            }
+        }
+
+        // Auto-start on page load
+        window.addEventListener('DOMContentLoaded', startNeko);
+    </script>
+</body>
+</html>
