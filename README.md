@@ -2,7 +2,7 @@
 
 A JavaScript reimplementation of the classic Neko desktop pet for the web.
 
-[**Live Demo**](https://louisabraham.github.io/nekojs/) | [Usage](#usage)
+[Live Demo](https://louisabraham.github.io/nekojs/) | [Usage](#usage) | [Github](https://github.com/louisabraham/nekojs)
 
 ## About
 
