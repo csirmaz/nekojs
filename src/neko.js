@@ -82,6 +82,9 @@
       this.targetY = this.y;
       this.oldTargetX = this.x;
       this.oldTargetY = this.y;
+      // Movement deltas (preserved like m_nDX, m_nDY in original)
+      this.moveDX = 0;
+      this.moveDY = 0;
 
       // Bounds
       this.boundsWidth = window.innerWidth - SPRITE_SIZE;
@@ -448,25 +451,25 @@
       const distance = Math.sqrt(dx * dx + dy * dy);
 
       // Calculate movement delta (like original m_nDX, m_nDY)
-      let moveDX, moveDY;
+      // Store as instance variables so they persist across ticks
       if (distance !== 0) {
         if (distance <= this.speed) {
           // Less than top speed - jump the gap
-          moveDX = dx;
-          moveDY = dy;
+          this.moveDX = dx;
+          this.moveDY = dy;
         } else {
           // More than top speed - run at top speed
-          moveDX = (this.speed * dx) / distance;
-          moveDY = (this.speed * dy) / distance;
+          this.moveDX = (this.speed * dx) / distance;
+          this.moveDY = (this.speed * dy) / distance;
         }
       } else {
-        moveDX = 0;
-        moveDY = 0;
+        this.moveDX = 0;
+        this.moveDY = 0;
       }
 
       // Store for paceAroundScreen check
-      this.lastMoveDX = moveDX;
-      this.lastMoveDY = moveDY;
+      this.lastMoveDX = this.moveDX;
+      this.lastMoveDY = this.moveDY;
 
       // Check if target moved (MoveStart equivalent)
       const moveStart = !(
@@ -482,14 +485,14 @@
           if (moveStart) {
             this.setState(NekoState.AWAKE);
           } else if (this.stateCount >= STOP_TIME) {
-            // Check for wall scratching
-            if (moveDX < 0 && this.logicX <= 0) {
+            // Check for wall scratching using preserved moveDX/moveDY
+            if (this.moveDX < 0 && this.logicX <= 0) {
               this.setState(NekoState.L_CLAW);
-            } else if (moveDX > 0 && this.logicX >= this.boundsWidth) {
+            } else if (this.moveDX > 0 && this.logicX >= this.boundsWidth) {
               this.setState(NekoState.R_CLAW);
-            } else if (moveDY < 0 && this.logicY <= 0) {
+            } else if (this.moveDY < 0 && this.logicY <= 0) {
               this.setState(NekoState.U_CLAW);
-            } else if (moveDY > 0 && this.logicY >= this.boundsHeight) {
+            } else if (this.moveDY > 0 && this.logicY >= this.boundsHeight) {
               this.setState(NekoState.D_CLAW);
             } else {
               this.setState(NekoState.WASH);
@@ -529,7 +532,7 @@
 
         case NekoState.AWAKE:
           if (this.stateCount >= AWAKE_TIME + Math.floor(Math.random() * 20)) {
-            this.calcDirection(moveDX, moveDY);
+            this.calcDirection(this.moveDX, this.moveDY);
           }
           break;
 
@@ -541,9 +544,9 @@
         case NekoState.UR_MOVE:
         case NekoState.DL_MOVE:
         case NekoState.DR_MOVE:
-          // Calculate new position
-          let newX = this.logicX + moveDX;
-          let newY = this.logicY + moveDY;
+          // Calculate new position using preserved moveDX/moveDY
+          let newX = this.logicX + this.moveDX;
+          let newY = this.logicY + this.moveDY;
           const wasOutside =
             newX <= 0 ||
             newX >= this.boundsWidth ||
@@ -551,7 +554,7 @@
             newY >= this.boundsHeight;
 
           // Update direction
-          this.calcDirection(moveDX, moveDY);
+          this.calcDirection(this.moveDX, this.moveDY);
 
           // Clamp position
           newX = Math.max(0, Math.min(this.boundsWidth, newX));
