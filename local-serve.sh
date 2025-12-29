@@ -1,6 +1,5 @@
-#\!/bin/bash
+#!/bin/bash
 set -e
 
-python3 build.py
-cp README.md docs/README.md
+./prepare-docs.sh
 cd docs && jekyll serve

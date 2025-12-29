@@ -27,11 +27,8 @@ jobs:
       - name: Install Pillow
         run: pip install Pillow
 
-      - name: Build neko.js
-        run: python build.py
-
-      - name: Copy README to docs
-        run: cp README.md docs/README.md
+      - name: Prepare docs
+        run: ./prepare-docs.sh
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

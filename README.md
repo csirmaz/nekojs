@@ -1,4 +1,4 @@
-# 🐱 Neko.js
+# <img src="nkosrc4/Neko98/Res/Awake.ico" width="32" alt="Neko"> Neko.js
 
 A JavaScript implementation of the classic Neko desktop pet for the web.
 
@@ -46,7 +46,7 @@ For more control over initialization:
 
 ### Local Installation
 
-Download `neko.js` from the [releases page](https://github.com/louisabraham/nekojs/releases) or build from source:
+Download [`neko.js`](https://louisabraham.github.io/nekojs/neko.js) directly or build from source:
 
 ```bash
 git clone https://github.com/louisabraham/nekojs.git
