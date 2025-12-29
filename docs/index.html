@@ -249,6 +249,17 @@
                 <li><code>4</code> - Run Around (chase invisible ball)</li>
             </ul>
 
+            <p><strong>Interactive Mode:</strong> Click on Neko to cycle through behaviors! By default, clicking the cat will change its behavior mode.</p>
+            <pre><code>// Enable click-to-change behavior (default: true)
+const neko = createNeko({
+    allowBehaviorChange: true
+});
+
+// Disable clicking
+const neko = createNeko({
+    allowBehaviorChange: false
+});</code></pre>
+
             <h3>API Methods</h3>
             <pre><code>const neko = createNeko();
 neko.start();          // Start the animation loop

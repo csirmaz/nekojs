@@ -67,8 +67,19 @@ const neko = createNeko(options);
 - `speed` (number, default: 10) - Movement speed in pixels per frame
 - `behaviorMode` (number, default: 0) - Behavior pattern (see below)
 - `idleThreshold` (number, default: 8) - Distance to stop moving
+- `allowBehaviorChange` (boolean, default: true) - Allow clicking Neko to cycle behaviors
 - `startX` (number) - Initial X position
 - `startY` (number) - Initial Y position
+
+### Interactive Mode
+
+**Click on Neko to change its behavior!** By default, clicking the cat cycles through all behavior modes. You can disable this:
+
+```javascript
+const neko = createNeko({
+  allowBehaviorChange: false  // Disable click-to-change
+});
+```
 
 ### Behavior Modes
 
