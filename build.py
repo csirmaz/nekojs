@@ -57,27 +57,35 @@ def build():
         'Awake.ico',      # 0: Awake
         'Up1.ico',        # 1: Up frame 1
         'Up2.ico',        # 2: Up frame 2
-        'Upright1.ico',   # 3: Up-right frame 1 (repurposed for down)
-        'Upright2.ico',   # 4: Up-right frame 2 (repurposed for down)
-        'left1.ico',      # 5: Left frame 1
-        'left2.ico',      # 6: Left frame 2
-        'Right1.ico',     # 7: Right frame 1
-        'right2.ico',     # 8: Right frame 2
-        'wash2.ico',      # 9: Wash
-        'scratch1.ico',   # 10: Scratch frame 1
-        'scratch2.ico',   # 11: Scratch frame 2
-        'yawn2.ico',      # 12: Yawn frame 1
-        'yawn3.ico',      # 13: Yawn frame 2
-        'sleep1.ico',     # 14: Sleep frame 1
-        'sleep2.ico',     # 15: Sleep frame 2
-        'upclaw1.ico',    # 16: Up claw frame 1
-        'upclaw2.ico',    # 17: Up claw frame 2
-        'Rightclaw2.ico', # 18: Right claw frame 1
-        'rightclaw1.ico', # 19: Right claw frame 2
-        'leftclaw1.ico',  # 20: Left claw frame 1
-        'leftclaw2.ico',  # 21: Left claw frame 2
-        'downright1.ico', # 22: Down claw frame 1 (repurposed)
-        'downright2.ico', # 23: Down claw frame 2 (repurposed)
+        'Upright1.ico',   # 3: Up-right frame 1
+        'Upright2.ico',   # 4: Up-right frame 2
+        'Right1.ico',     # 5: Right frame 1
+        'right2.ico',     # 6: Right frame 2
+        'Downright1.ico', # 7: Down-right frame 1
+        'Downright2.ico', # 8: Down-right frame 2
+        'Down1.ico',      # 9: Down frame 1
+        'down2.ico',      # 10: Down frame 2
+        'Downleft2.ico',  # 11: Down-left frame 1
+        'downleft1.ico',  # 12: Down-left frame 2
+        'left1.ico',      # 13: Left frame 1
+        'left2.ico',      # 14: Left frame 2
+        'Upleft1.ico',    # 15: Up-left frame 1
+        'Upleft2.ico',    # 16: Up-left frame 2
+        'upclaw1.ico',    # 17: Up claw frame 1
+        'upclaw2.ico',    # 18: Up claw frame 2
+        'Rightclaw2.ico', # 19: Right claw frame 1
+        'rightclaw1.ico', # 20: Right claw frame 2
+        'downclaw1.ico',  # 21: Down claw frame 1
+        'downclaw2.ico',  # 22: Down claw frame 2
+        'leftclaw1.ico',  # 23: Left claw frame 1
+        'leftclaw2.ico',  # 24: Left claw frame 2
+        'scratch1.ico',   # 25: Scratch frame 1
+        'scratch2.ico',   # 26: Scratch frame 2
+        'wash2.ico',      # 27: Wash
+        'yawn2.ico',      # 28: Yawn frame 1
+        'yawn3.ico',      # 29: Yawn frame 2
+        'sleep1.ico',     # 30: Sleep frame 1
+        'sleep2.ico',     # 31: Sleep frame 2
     ]
 
     print('Converting sprites to base64...')

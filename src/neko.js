@@ -87,24 +87,24 @@
             // Animation lookup table (maps state to sprite indices)
             // Format: [frame1_index, frame2_index]
             this.animationTable = [
-                [14, 14],  // STOP - uses sleep frame
-                [9, 9],    // WASH
-                [10, 11],  // SCRATCH
-                [12, 13],  // YAWN
-                [14, 15],  // SLEEP
+                [30, 30],  // STOP - uses sleep frame
+                [27, 27],  // WASH
+                [25, 26],  // SCRATCH
+                [28, 29],  // YAWN
+                [30, 31],  // SLEEP
                 [0, 0],    // AWAKE
                 [1, 2],    // U_MOVE
-                [3, 4],    // D_MOVE (using down sprites)
-                [5, 6],    // L_MOVE
-                [7, 8],    // R_MOVE
-                [1, 2],    // UL_MOVE (reuse up frames)
-                [1, 2],    // UR_MOVE (reuse up frames)
-                [3, 4],    // DL_MOVE (reuse down frames)
-                [3, 4],    // DR_MOVE (reuse down frames)
-                [16, 17],  // U_CLAW
-                [22, 23],  // D_CLAW
-                [20, 21],  // L_CLAW
-                [18, 19]   // R_CLAW
+                [9, 10],   // D_MOVE
+                [13, 14],  // L_MOVE
+                [5, 6],    // R_MOVE
+                [15, 16],  // UL_MOVE
+                [3, 4],    // UR_MOVE
+                [11, 12],  // DL_MOVE
+                [7, 8],    // DR_MOVE
+                [17, 18],  // U_CLAW
+                [21, 22],  // D_CLAW
+                [23, 24],  // L_CLAW
+                [19, 20]   // R_CLAW
             ];
 
             // Additional state for behaviors
