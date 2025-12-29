@@ -52,7 +52,8 @@ def build():
     # Create docs directory
     docs_dir.mkdir(exist_ok=True)
 
-    # Sprite files in the correct order (matching animation table)
+    # Sprite files in the EXACT order from original C++ LoadImages() comment
+    # This order is what the C++ code expects when loading icons 0-31
     sprite_files = [
         'Awake.ico',      # 0: Awake
         'Up1.ico',        # 1: Up frame 1
@@ -65,24 +66,24 @@ def build():
         'Downright2.ico', # 8: Down-right frame 2
         'Down1.ico',      # 9: Down frame 1
         'down2.ico',      # 10: Down frame 2
-        'Downleft2.ico',  # 11: Down-left frame 1
+        'Downleft2.ico',  # 11: Down-left frame 1 (note: files are named 2,1 not 1,2)
         'downleft1.ico',  # 12: Down-left frame 2
         'left1.ico',      # 13: Left frame 1
         'left2.ico',      # 14: Left frame 2
         'Upleft1.ico',    # 15: Up-left frame 1
         'Upleft2.ico',    # 16: Up-left frame 2
-        'upclaw1.ico',    # 17: Up claw frame 1
-        'upclaw2.ico',    # 18: Up claw frame 2
-        'Rightclaw2.ico', # 19: Right claw frame 1
-        'rightclaw1.ico', # 20: Right claw frame 2
-        'downclaw1.ico',  # 21: Down claw frame 1
-        'downclaw2.ico',  # 22: Down claw frame 2
-        'leftclaw1.ico',  # 23: Left claw frame 1
-        'leftclaw2.ico',  # 24: Left claw frame 2
-        'scratch1.ico',   # 25: Scratch frame 1
-        'scratch2.ico',   # 26: Scratch frame 2
-        'wash2.ico',      # 27: Wash
-        'yawn2.ico',      # 28: Yawn frame 1
+        'upclaw1.ico',    # 17: Up Claw frame 1
+        'upclaw2.ico',    # 18: Up Claw frame 2
+        'Rightclaw2.ico', # 19: Right Claw frame 1 (note: files are named 2,1)
+        'rightclaw1.ico', # 20: Right Claw frame 2
+        'leftclaw1.ico',  # 21: Left Claw frame 1
+        'leftclaw2.ico',  # 22: Left Claw frame 2
+        'downclaw1.ico',  # 23: Down Claw frame 1
+        'downclaw2.ico',  # 24: Down Claw frame 2
+        'wash2.ico',      # 25: Wash (only one wash frame)
+        'scratch1.ico',   # 26: Scratch frame 1
+        'scratch2.ico',   # 27: Scratch frame 2
+        'yawn2.ico',      # 28: Yawn frame 1 (STOP also uses this)
         'yawn3.ico',      # 29: Yawn frame 2
         'sleep1.ico',     # 30: Sleep frame 1
         'sleep2.ico',     # 31: Sleep frame 2
@@ -143,15 +144,18 @@ def build():
     code_lines = []
 
     for line in lines:
-        if line.strip().startswith('(function()'):
+        stripped = line.strip()
+        # Match IIFE opening with flexible whitespace: (function() or (function ()
+        if stripped.startswith('(function') and '{' in stripped:
             in_code = True
             continue
-        elif line.strip() == "})();":
+        # Match IIFE closing: })(); or }());
+        elif stripped in ["})();", "}());"]:
             in_code = False
             continue
         elif in_code:
             # Skip the 'use strict' since we already added it
-            if line.strip() == "'use strict';" or line.strip() == '"use strict";':
+            if stripped == "'use strict';" or stripped == '"use strict";':
                 continue
             code_lines.append(line)
 
