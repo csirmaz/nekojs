@@ -8,7 +8,7 @@ A JavaScript reimplementation of the classic Neko desktop pet for the web.
 
 [Neko](https://en.wikipedia.org/wiki/Neko_(software)) is a classic desktop pet that follows your mouse cursor around the screen. This JavaScript version brings the cat to web pages.
 
-It should also be possible to build a browser extension that adds a Neko to all pages and keeps its position consistent across pages, and this would be a welcome [addition](https://github.com/louisabraham/nekojs/pulls).
+It should also be possible to build a browser extension that adds a Neko to all pages and keeps its position consistent across pages. Feel free to submit a pull request or reuse the code in your application!
 
 The original goal of this recreation was to test the capabilities of Claude Code (Sonnet 4.5) and to see how well it could recreate the original Neko98 behavior with just the original source code and a few prompts. I would have called this **NEKOMANCING** (ba-dum-tss!).
 
