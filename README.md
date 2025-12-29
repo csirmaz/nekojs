@@ -2,7 +2,7 @@
 
 A JavaScript implementation of the classic Neko desktop pet for the web.
 
-[**Live Demo**](https://yourusername.github.io/nekojs/) | [Installation](#installation) | [API](#api)
+[**Live Demo**](https://louisabraham.github.io/nekojs/) | [Installation](#installation) | [API](#api)
 
 ## About
 
@@ -24,7 +24,7 @@ Neko is a classic desktop pet that follows your mouse cursor around the screen. 
 Add this single line to your HTML to automatically start Neko:
 
 ```html
-<script src="https://yourusername.github.io/nekojs/neko.js" data-autostart></script>
+<script src="https://louisabraham.github.io/nekojs/neko.js" data-autostart></script>
 ```
 
 ### Manual Control
@@ -32,7 +32,7 @@ Add this single line to your HTML to automatically start Neko:
 For more control over initialization:
 
 ```html
-<script src="https://yourusername.github.io/nekojs/neko.js"></script>
+<script src="https://louisabraham.github.io/nekojs/neko.js"></script>
 <script>
   // Create and start Neko
   const neko = createNeko({
@@ -45,10 +45,10 @@ For more control over initialization:
 
 ### Local Installation
 
-Download `neko.js` from the [releases page](https://github.com/yourusername/nekojs/releases) or build from source:
+Download `neko.js` from the [releases page](https://github.com/louisabraham/nekojs/releases) or build from source:
 
 ```bash
-git clone https://github.com/yourusername/nekojs.git
+git clone https://github.com/louisabraham/nekojs.git
 cd nekojs
 python3 build.py
 ```
@@ -108,7 +108,7 @@ neko.running      // Whether animation is running
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/nekojs.git
+git clone https://github.com/louisabraham/nekojs.git
 cd nekojs
 
 # Run the build script
@@ -164,11 +164,12 @@ This JavaScript version faithfully recreates the original Neko98 behavior:
 After downloading and decompressing the original `nkosrc4` source and converting `classes.doc` to `classes.txt`, the project was created through AI-assisted development.
 
 **Generation Statistics:**
-- Total cost: $1.42
-- API time: 9m 34s
-- Wall time: 20m 34s
-- Code changes: 1442 lines added, 37 lines removed
+- Total cost: $2.07
+- API time: 11m 27s
+- Wall time: 26m 49s
+- Code changes: 1,554 lines added, 51 lines removed
 - Model: Claude Sonnet 4.5 (primary), with Haiku for exploration tasks
+- Note: Using the most expensive model (Opus 4.5) without prompt caching optimization
 
 <details>
 <summary><strong>Prompt 1: Initial Implementation</strong></summary>
@@ -241,6 +242,32 @@ claude-sonnet: 146 input, 24.5k output, 1.8m cache read, 100.2k cache write ($1.
 
 </details>
 
+<details>
+<summary><strong>Prompt 4: GitHub Integration and Final Stats</strong></summary>
+
+After configuring the GitHub remote, final prompt to update links and document final statistics:
+
+```
+I have now configured the github remote. Update the links where suitable. Don't
+forget to update README.md and index.html to include this prompt. Mention that
+just before this, the total cost was
+
+Total cost: $2.07 Total duration (API): 11m 27s Total duration (wall): 26m 49s
+Total code changes: 1554 lines added, 51 lines removed Usage by model:
+claude-haiku: 32.1k input, 5.7k output, 179.8k cache read, 41.0k cache write ($0.1297)
+claude-opus-4-5: 901 input, 109 output, 0 cache read, 0 cache write ($0.0072)
+claude-sonnet: 174 input, 29.0k output, 2.8m cache read, 171.8k cache write ($1.94)
+
+mostly because the conversation is getting long and I didn't compact it at all.
+I'm also using the most expensive Claude Opus 4.5 model.
+
+Commit and push your changes.
+```
+
+This prompt updated all GitHub links to point to `louisabraham/nekojs` and documented the complete generation cost including the conversation overhead from not compacting prompts.
+
+</details>
+
 ### What the AI Did
 
 1. Explored and analyzed the original C++ source code (26 files)
@@ -287,4 +314,4 @@ Special thanks to:
 
 ---
 
-Made with 💜 by Claude AI | [View Demo](https://yourusername.github.io/nekojs/)
+Made with 💜 by Claude AI | [View Demo](https://louisabraham.github.io/nekojs/)

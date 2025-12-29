@@ -225,11 +225,11 @@
 
             <h3>Quick Start (Auto-start)</h3>
             <p>Add this single line to your HTML to automatically start Neko:</p>
-            <pre><code>&lt;script src="https://yourusername.github.io/nekojs/neko.js" data-autostart&gt;&lt;/script&gt;</code></pre>
+            <pre><code>&lt;script src="https://louisabraham.github.io/nekojs/neko.js" data-autostart&gt;&lt;/script&gt;</code></pre>
 
             <h3>Manual Control</h3>
             <p>For more control, initialize Neko programmatically:</p>
-            <pre><code>&lt;script src="https://yourusername.github.io/nekojs/neko.js"&gt;&lt;/script&gt;
+            <pre><code>&lt;script src="https://louisabraham.github.io/nekojs/neko.js"&gt;&lt;/script&gt;
 &lt;script&gt;
     // Create and start Neko
     const neko = createNeko({
@@ -264,7 +264,7 @@ neko.behaviorMode = 2; // Change behavior</code></pre>
                 <strong>Original Neko:</strong> Masayuki Koba (X-Windows version)<br>
                 <strong>Windows Port:</strong> David Harvey (1998) - Neko98<br>
                 <strong>JavaScript Implementation:</strong> Created by AI (Claude Sonnet 4.5)<br>
-                <strong>Generation Cost:</strong> $1.42 (9m 34s API time, 1442 lines of code)<br>
+                <strong>Generation Cost:</strong> $2.07 (11m 27s API time, 1,554 lines of code)<br>
                 <strong>Source Code:</strong> Downloaded from
                 <a href="https://web.archive.org/web/20050330224958fw_/http://www.angelfire.com/ct/neko/download.html" target="_blank">
                     web.archive.org
@@ -276,7 +276,7 @@ neko.behaviorMode = 2; // Change behavior</code></pre>
                 <p><strong>This entire project was generated through AI-assisted development using Claude Sonnet 4.5!</strong></p>
                 <p>The original C++ source code (nkosrc4) was downloaded and decompressed, with <code>classes.doc</code>
                 converted to <code>classes.txt</code>. Everything else—exploration, analysis, JavaScript implementation,
-                build system, documentation, and this webpage—was created through three prompts:</p>
+                build system, documentation, and this webpage—was created through four prompts:</p>
 
                 <details>
                     <summary><strong>Prompt 1: Initial Implementation</strong></summary>
@@ -332,6 +332,25 @@ claude-opus-4-5: 901 input, 109 output, 0 cache read, 0 cache write ($0.0072)
 claude-sonnet: 146 input, 24.5k output, 1.8m cache read, 100.2k cache write ($1.28)</code></pre>
                 </details>
 
+                <details>
+                    <summary><strong>Prompt 4: GitHub Integration and Final Stats</strong></summary>
+                    <pre style="white-space: pre-wrap; margin-top: 1rem;"><code>I have now configured the github remote. Update the links where suitable. Don't
+forget to update README.md and index.html to include this prompt. Mention that
+just before this, the total cost was
+
+Total cost: $2.07 Total duration (API): 11m 27s Total duration (wall): 26m 49s
+Total code changes: 1554 lines added, 51 lines removed Usage by model:
+claude-haiku: 32.1k input, 5.7k output, 179.8k cache read, 41.0k cache write ($0.1297)
+claude-opus-4-5: 901 input, 109 output, 0 cache read, 0 cache write ($0.0072)
+claude-sonnet: 174 input, 29.0k output, 2.8m cache read, 171.8k cache write ($1.94)
+
+mostly because the conversation is getting long and I didn't compact it at all.
+I'm also using the most expensive Claude Opus 4.5 model.
+
+Commit and push your changes.</code></pre>
+                    <p style="margin-top: 0.5rem;">This prompt updated all GitHub links from placeholder to <code>louisabraham/nekojs</code> and documented the final generation statistics. The higher cost reflects the long conversation history without prompt compaction.</p>
+                </details>
+
                 <p style="margin-top: 1rem;"><strong>What the AI did:</strong></p>
                 <ul>
                     <li>Explored and analyzed 26 C++ source files</li>
@@ -352,13 +371,13 @@ claude-sonnet: 146 input, 24.5k output, 1.8m cache read, 100.2k cache write ($1.
                 respecting the original Neko license which requires GPL for the core behavior code.
             </p>
             <p>
-                See <a href="https://github.com/yourusername/nekojs/blob/main/LICENSE.md">LICENSE.md</a> for full details.
+                See <a href="https://github.com/louisabraham/nekojs/blob/main/LICENSE.md">LICENSE.md</a> for full details.
             </p>
         </div>
 
         <footer>
             <p>Made with 💜 by Claude AI |
-            <a href="https://github.com/yourusername/nekojs">View on GitHub</a></p>
+            <a href="https://github.com/louisabraham/nekojs">View on GitHub</a></p>
         </footer>
     </div>
 
