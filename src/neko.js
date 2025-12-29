@@ -58,7 +58,7 @@
       // Configuration
       this.fps = options.fps || 120; // Target FPS (default 120 for smooth movement)
       // Original used 16 pixels/tick for 640x480 screens (~2.5% of width)
-      // Modern screens are ~3x larger, so default to 32 for similar feel
+      // Modern screens are ~3x larger, so default to 24 for similar feel
       this.speed = options.speed || 24;
       this.behaviorMode = options.behaviorMode || BehaviorMode.CHASE_MOUSE;
       this.idleThreshold = options.idleThreshold || 6; // Original m_dwIdleSpace = 6
@@ -144,8 +144,12 @@
       this.element.style.width = SPRITE_SIZE + "px";
       this.element.style.height = SPRITE_SIZE + "px";
       this.element.style.imageRendering = "pixelated";
-      this.element.style.pointerEvents = this.allowBehaviorChange ? "auto" : "none";
-      this.element.style.cursor = this.allowBehaviorChange ? "pointer" : "default";
+      this.element.style.pointerEvents = this.allowBehaviorChange
+        ? "auto"
+        : "none";
+      this.element.style.cursor = this.allowBehaviorChange
+        ? "pointer"
+        : "default";
       this.element.style.zIndex = "999999";
       this.element.style.left = this.x + "px";
       this.element.style.top = this.y + "px";
