@@ -264,6 +264,8 @@ Commit and push your changes.
 
 ### Manual Improvements
 
+The plan was to try to let the AI fully implement the project, but it was not able to do so.
+
 After the initial AI generation, significant work with a human in the loop was done to fix bugs and add features:
 
 - **Rewrote movement system** - Complete rewrite for more realistic movement matching the original C++ implementation for state changes and animation timing while allowing for smooth movement at **higher** FPS.
