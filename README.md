@@ -10,7 +10,9 @@ A JavaScript reimplementation of the classic Neko desktop pet for the web.
 
 It should also be possible to build a browser extension that adds a Neko to all pages and keeps its position consistent across pages, and this would be a welcome addition.
 
-The original goal of this recreation was to test the capabilities of Claude Code (Sonnet 4.5) and to see how well it could recreate the original Neko98 behavior with just the original source code and a few prompts. However, some manual improvements were needed. Read more about the creation process [below](#how-this-project-was-made).
+The original goal of this recreation was to test the capabilities of Claude Code (Sonnet 4.5) and to see how well it could recreate the original Neko98 behavior with just the original source code and a few prompts. I would have called this **NEKOMANCING** (ba-dum-tss!).
+
+However, some manual improvements were needed. Read more about the creation process [below](#how-this-project-was-made).
 
 The original source code (in the `nkosrc4/` folder) was downloaded from [web.archive.org](https://web.archive.org/web/20050330224958fw_/http://www.angelfire.com/ct/neko/download.html).
 
