@@ -137,28 +137,41 @@
     }
 
     init() {
-      // Create the neko element
+      // Create the neko element with defensive styles to prevent global CSS interference
       this.element = document.createElement("div");
       this.element.className = "neko";
-      this.element.style.position = "fixed";
-      this.element.style.width = SPRITE_SIZE + "px";
-      this.element.style.height = SPRITE_SIZE + "px";
-      this.element.style.imageRendering = "pixelated";
-      this.element.style.pointerEvents = this.allowBehaviorChange
-        ? "auto"
-        : "none";
-      this.element.style.cursor = this.allowBehaviorChange
-        ? "pointer"
-        : "default";
-      this.element.style.zIndex = "999999";
-      this.element.style.left = this.x + "px";
-      this.element.style.top = this.y + "px";
+      this.element.style.cssText = `
+        position: fixed;
+        width: ${SPRITE_SIZE}px;
+        height: ${SPRITE_SIZE}px;
+        image-rendering: pixelated;
+        pointer-events: ${this.allowBehaviorChange ? "auto" : "none"};
+        cursor: ${this.allowBehaviorChange ? "pointer" : "default"};
+        z-index: 999999;
+        left: ${this.x}px;
+        top: ${this.y}px;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background: transparent;
+        overflow: visible;
+        box-sizing: border-box;
+      `;
 
-      // Create image element
+      // Create image element with defensive styles to prevent global CSS interference
       const img = document.createElement("img");
-      img.style.width = "100%";
-      img.style.height = "100%";
-      img.style.background = "transparent";
+      img.style.cssText = `
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        border: none;
+        margin: 0;
+        padding: 0;
+        max-width: none;
+        max-height: none;
+        display: block;
+        box-sizing: border-box;
+      `;
       this.element.appendChild(img);
 
       document.body.appendChild(this.element);
