@@ -158,6 +158,7 @@
       const img = document.createElement("img");
       img.style.width = "100%";
       img.style.height = "100%";
+      img.style.background = "transparent";
       this.element.appendChild(img);
 
       document.body.appendChild(this.element);
