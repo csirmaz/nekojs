@@ -156,6 +156,8 @@
         background: transparent;
         overflow: visible;
         box-sizing: border-box;
+        user-select: none;
+        -webkit-user-select: none;
       `;
 
       // Create image element with defensive styles to prevent global CSS interference
@@ -171,6 +173,10 @@
         max-height: none;
         display: block;
         box-sizing: border-box;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-user-drag: none;
+        pointer-events: none;
       `;
       this.element.appendChild(img);
 
