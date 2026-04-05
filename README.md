@@ -14,17 +14,17 @@ https://github.com/louisabraham/nekojs
 The original source code (in the `nkosrc4/` folder) was downloaded from
 [web.archive.org](https://web.archive.org/web/20050330224958fw_/http://www.angelfire.com/ct/neko/download.html).
 
-## Original docs
+## This version
+
+A simplified version of Neko in `dist/neko.js`. It only moves if `neko.goto(x,y)` is called.
+
 
 ### Features
 
-- 🎯 **Follows your cursor** - Chases your mouse around the page
 - 💤 **Idle animations** - Falls asleep when you stop moving
-- 🐾 **Faithful recreation** - Matches original Neko98 state machine and behavior
 - 🎨 **Pixel-perfect** - Uses original 32x32 pixel sprites
 - ⚡ **Lightweight** - ~38KB uncompressed with sprites embedded (brotli compressed to ~14KB)
 - 🚀 **Zero dependencies** - Pure vanilla JavaScript
-- 🖱️ **Interactive** - Click to change behavior modes
 
 ## Usage
 
@@ -36,9 +36,11 @@ const neko = createNeko({
   behaviorMode: 0,           // 0=chase, 1=run away, 2=random, 3=pace, 4=ball chase
   idleThreshold: 6,          // Distance to consider idle (default: 6)
   allowBehaviorChange: true, // Click to cycle behaviors (default: true)
-  startX: 0,                 // Initial X position (default: 0)
-  startY: 0                  // Initial Y position (default: 0)
+  startX: 0,                 // Initial X position (OBLIGATORY)
+  startY: 0                  // Initial Y position (OBLIGATORY)
 });
+
+neko.goto(100, 100);
 
 neko.start();
 neko.stop();

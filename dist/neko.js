@@ -70,34 +70,24 @@
     R_CLAW: 17, // Clawing right (at right boundary)
   };
 
-  // Behavior modes (matching original Action enum)
-  const BehaviorMode = {
-    CHASE_MOUSE: 0,
-    RUN_AWAY_FROM_MOUSE: 1,
-    RUN_AROUND_RANDOMLY: 2,
-    PACE_AROUND_SCREEN: 3,
-    RUN_AROUND: 4,
-  };
-
   // Animation timing constants (in frames)
   const STOP_TIME = 4;
   const WASH_TIME = 10;
   const SCRATCH_TIME = 4;
   const YAWN_TIME = 3;
-  const AWAKE_TIME = 3;
+  const AWAKE_TIME = 1;
   const CLAW_TIME = 10;
 
   // Sprite size
   const SPRITE_SIZE = 32;
 
   class Neko {
-    constructor(options = {}) {
+    constructor(options = {}) { // MUST specify startX, startY
       // Configuration
       this.fps = options.fps || 120; // Target FPS (default 120 for smooth movement)
       // Original used 16 pixels/tick for 640x480 screens (~2.5% of width)
       // Modern screens are ~3x larger, so default to 24 for similar feel
       this.speed = options.speed || 24;
-      this.behaviorMode = options.behaviorMode || BehaviorMode.CHASE_MOUSE;
       this.idleThreshold = options.idleThreshold || 6; // Original m_dwIdleSpace = 6
 
       // State
@@ -105,20 +95,6 @@
       this.tickCount = 0; // Increments every frame (like m_uTickCount)
       this.stateCount = 0; // Increments every 2 original ticks (like m_uStateCount)
 
-      // Position (display position for smooth rendering)
-      this.x = options.startX || 0;
-      this.y = options.startY || 0;
-      // Logic position (updated at original 5 FPS tick rate)
-      this.logicX = this.x;
-      this.logicY = this.y;
-      // Previous logic position (for interpolation)
-      this.prevLogicX = this.x;
-      this.prevLogicY = this.y;
-      // Target tracking
-      this.targetX = this.x;
-      this.targetY = this.y;
-      this.oldTargetX = this.x;
-      this.oldTargetY = this.y;
       // Movement deltas (preserved like m_nDX, m_nDY in original)
       this.moveDX = 0;
       this.moveDY = 0;
@@ -136,7 +112,6 @@
       // DOM element
       this.element = null;
       this.spriteImages = [];
-      this.allowBehaviorChange = options.allowBehaviorChange !== false; // Default true
 
       // Animation lookup table (maps state to sprite indices)
       // Format: [frame1_index, frame2_index]
@@ -163,17 +138,32 @@
         [19, 20], // R_CLAW: m_nAnimation[R_CLAW][0]=19, [1]=20
       ];
 
-      // Additional state for behaviors
-      this.cornerIndex = 0;
-      this.ballX = 0;
-      this.ballY = 0;
-      this.ballVX = 0;
-      this.ballVY = 0;
-
-      this.init();
+      this.init(options.startX, options.startY);
+    }
+    
+    set_position(x, y) {
+      // Random starting position within viewport
+      this.x = x;
+      this.y = y;
+      this.logicX = this.x;
+      this.logicY = this.y;
+      this.prevLogicX = this.x;
+      this.prevLogicY = this.y;
+      // Initialize target to current position (so no initial movement)
+      this.targetX = this.x + SPRITE_SIZE / 2;
+      this.targetY = this.y + SPRITE_SIZE - 1;
+      this.oldTargetX = this.targetX;
+      this.oldTargetY = this.targetY;
+      this.updatePosition();
+    }
+    
+    goto(x, y) {
+        this.mouseX = x;
+        this.mouseY = y;
+        this.hasMouseMoved = true;
     }
 
-    init() {
+    init(startX, startY) {
       // Create the neko element with defensive styles to prevent global CSS interference
       this.element = document.createElement("div");
       this.element.className = "neko";
@@ -182,8 +172,6 @@
         width: ${SPRITE_SIZE}px;
         height: ${SPRITE_SIZE}px;
         image-rendering: pixelated;
-        pointer-events: ${this.allowBehaviorChange ? "auto" : "none"};
-        cursor: ${this.allowBehaviorChange ? "pointer" : "default"};
         z-index: 999999;
         left: ${this.x}px;
         top: ${this.y}px;
@@ -219,45 +207,16 @@
 
       document.body.appendChild(this.element);
 
-      // Click to cycle through behaviors
-      // Use mousedown instead of click - click requires mouseup on same element,
-      // which fails if the cat moves between mousedown and mouseup
-      if (this.allowBehaviorChange) {
-        this.element.addEventListener("mousedown", (e) => {
-          e.stopPropagation();
-          e.preventDefault(); // Prevent text selection
-          // Make cat appear surprised/awake
-          this.setState(NekoState.AWAKE);
-          this.cycleBehavior();
-        });
-      }
-
-      // Track mouse position - set flag on first move
-      document.addEventListener("mousemove", (e) => {
-        this.mouseX = e.clientX;
-        this.mouseY = e.clientY;
-        this.hasMouseMoved = true;
-      });
-
       // Update bounds on resize
       window.addEventListener("resize", () => {
         this.boundsWidth = document.documentElement.clientWidth - SPRITE_SIZE;
         this.boundsHeight = window.innerHeight - SPRITE_SIZE;
+        if(this.x > this.boundsWidth || this.y > this.boundsHeight) {
+          this.set_position(Math.random() * this.boundsWidth, Math.random() * this.boundsHeight);
+        }
       });
-
-      // Random starting position within viewport
-      this.x = Math.random() * this.boundsWidth;
-      this.y = Math.random() * this.boundsHeight;
-      this.logicX = this.x;
-      this.logicY = this.y;
-      this.prevLogicX = this.x;
-      this.prevLogicY = this.y;
-      // Initialize target to current position (so no initial movement)
-      this.targetX = this.x + SPRITE_SIZE / 2;
-      this.targetY = this.y + SPRITE_SIZE - 1;
-      this.oldTargetX = this.targetX;
-      this.oldTargetY = this.targetY;
-      this.updatePosition();
+      
+      this.set_position(startX, startY);
 
       // Animation loop
       this.running = false;
@@ -355,24 +314,7 @@
         this.stateCount++;
       }
 
-      // Update behavior based on mode
-      switch (this.behaviorMode) {
-        case BehaviorMode.CHASE_MOUSE:
-          this.chaseMouse();
-          break;
-        case BehaviorMode.RUN_AWAY_FROM_MOUSE:
-          this.runAwayFromMouse();
-          break;
-        case BehaviorMode.RUN_AROUND_RANDOMLY:
-          this.runRandomly();
-          break;
-        case BehaviorMode.PACE_AROUND_SCREEN:
-          this.paceAroundScreen();
-          break;
-        case BehaviorMode.RUN_AROUND:
-          this.runAround();
-          break;
-      }
+      this.chaseMouse();
 
       // Update animation frame
       this.updateSprite();
@@ -389,122 +331,6 @@
         return;
       }
       this.runTowards(this.mouseX, this.mouseY);
-    }
-
-    runAwayFromMouse() {
-      // Don't run away until mouse has moved
-      if (!this.hasMouseMoved) {
-        this.runTowards(
-          this.logicX + SPRITE_SIZE / 2,
-          this.logicY + SPRITE_SIZE - 1
-        );
-        return;
-      }
-
-      // Original uses m_dwIdleSpace * 16 as the trigger distance
-      const dwLimit = this.idleThreshold * 16;
-      const xdiff = this.logicX + SPRITE_SIZE / 2 - this.mouseX;
-      const ydiff = this.logicY + SPRITE_SIZE / 2 - this.mouseY;
-
-      if (Math.abs(xdiff) < dwLimit && Math.abs(ydiff) < dwLimit) {
-        // Mouse cursor is too close - run away
-        const dLength = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
-        let targetX, targetY;
-        if (dLength !== 0) {
-          targetX = this.logicX + (xdiff / dLength) * dwLimit;
-          targetY = this.logicY + (ydiff / dLength) * dwLimit;
-        } else {
-          targetX = targetY = 32;
-        }
-        this.runTowards(targetX, targetY);
-        // Skip awake animation like original
-        if (this.state === NekoState.AWAKE) {
-          this.calcDirection(targetX - this.logicX, targetY - this.logicY);
-        }
-      } else {
-        // Keep running to current target (idle in place)
-        this.runTowards(this.targetX, this.targetY);
-      }
-    }
-
-    runRandomly() {
-      // Original: increments actionCount while sleeping, picks new target after idleSpace*10
-      if (this.state === NekoState.SLEEP) {
-        this.actionCount = (this.actionCount || 0) + 1;
-      }
-      if ((this.actionCount || 0) > this.idleThreshold * 10) {
-        this.actionCount = 0;
-        this.targetX = Math.random() * this.boundsWidth;
-        this.targetY = Math.random() * this.boundsHeight;
-        this.runTowards(this.targetX, this.targetY);
-      } else {
-        this.runTowards(this.targetX, this.targetY);
-      }
-    }
-
-    paceAroundScreen() {
-      // Original checks if neko has stopped moving (m_nDX == 0 && m_nDY == 0)
-      // We track this via lastMoveDX/DY
-      if (this.lastMoveDX === 0 && this.lastMoveDY === 0) {
-        this.cornerIndex = ((this.cornerIndex || 0) + 1) % 4;
-      }
-
-      // Corners offset by sprite size (matching original)
-      // Target positions that result in neko stopping at the corners
-      const corners = [
-        [SPRITE_SIZE + SPRITE_SIZE / 2, SPRITE_SIZE + SPRITE_SIZE - 1],
-        [
-          SPRITE_SIZE + SPRITE_SIZE / 2,
-          this.boundsHeight - SPRITE_SIZE + SPRITE_SIZE - 1,
-        ],
-        [
-          this.boundsWidth - SPRITE_SIZE + SPRITE_SIZE / 2,
-          this.boundsHeight - SPRITE_SIZE + SPRITE_SIZE - 1,
-        ],
-        [
-          this.boundsWidth - SPRITE_SIZE + SPRITE_SIZE / 2,
-          SPRITE_SIZE + SPRITE_SIZE - 1,
-        ],
-      ];
-
-      const target = corners[this.cornerIndex || 0];
-      this.runTowards(target[0], target[1]);
-    }
-
-    runAround() {
-      // Original ball physics with repelling from edges
-      const dwBoundingBox = this.speed * 8;
-
-      // Initialize ball if needed (matching original constructor)
-      if (this.ballX === 0 && this.ballY === 0) {
-        this.ballX = Math.random() * (this.boundsWidth - dwBoundingBox);
-        this.ballY = Math.random() * (this.boundsHeight - dwBoundingBox);
-        this.ballVX = (Math.random() < 0.5 ? 1 : -1) * (this.speed / 2) + 1;
-        this.ballVY = (Math.random() < 0.5 ? 1 : -1) * (this.speed / 2) + 1;
-      }
-
-      // Move invisible ball
-      this.ballX += this.ballVX;
-      this.ballY += this.ballVY;
-
-      // Repel from edges (original logic)
-      if (this.ballX < dwBoundingBox) {
-        if (this.ballX > 0) this.ballVX++;
-        else this.ballVX = -this.ballVX;
-      } else if (this.ballX > this.boundsWidth - dwBoundingBox) {
-        if (this.ballX < this.boundsWidth) this.ballVX--;
-        else this.ballVX = -this.ballVX;
-      }
-
-      if (this.ballY < dwBoundingBox) {
-        if (this.ballY > 0) this.ballVY++;
-        else this.ballVY = -this.ballVY;
-      } else if (this.ballY > this.boundsHeight - dwBoundingBox) {
-        if (this.ballY < this.boundsHeight) this.ballVY--;
-        else this.ballVY = -this.ballVY;
-      }
-
-      this.runTowards(this.ballX, this.ballY);
     }
 
     setState(newState) {
@@ -609,7 +435,7 @@
           break;
 
         case NekoState.AWAKE:
-          if (this.stateCount >= AWAKE_TIME + Math.floor(Math.random() * 20)) {
+          if (this.stateCount >= AWAKE_TIME) {
             this.calcDirection(this.moveDX, this.moveDY);
           }
           break;
@@ -723,46 +549,12 @@
       );
     }
 
-    cycleBehavior() {
-      // Cycle through behaviors: Chase -> Run Away -> Random -> Pace -> Run Around -> back to Chase
-      const behaviors = [
-        BehaviorMode.CHASE_MOUSE,
-        BehaviorMode.RUN_AWAY_FROM_MOUSE,
-        BehaviorMode.RUN_AROUND_RANDOMLY,
-        BehaviorMode.PACE_AROUND_SCREEN,
-        BehaviorMode.RUN_AROUND,
-      ];
-      const currentIndex = behaviors.indexOf(this.behaviorMode);
-      const nextIndex = (currentIndex + 1) % behaviors.length;
-      this.behaviorMode = behaviors[nextIndex];
-
-      // Reset state to wake the cat up if sleeping
-      if (this.state === NekoState.SLEEP) {
-        this.setState(NekoState.AWAKE);
-      }
-
-      // Show behavior name (optional - can be removed if you don't want this)
-      const behaviorNames = [
-        "Chase Mouse",
-        "Run Away From Mouse",
-        "Run Around Randomly",
-        "Pace Around Screen",
-        "Run Around",
-      ];
-      console.log(`Neko behavior: ${behaviorNames[nextIndex]}`);
-    }
-
     destroy() {
       if (this.element && this.element.parentNode) {
         this.element.parentNode.removeChild(this.element);
       }
     }
   }
-
-  // Export to global scope
-  window.Neko = Neko;
-  window.NekoState = NekoState;
-  window.BehaviorMode = BehaviorMode;
 
     // Auto-initialize function
     window.createNeko = function(options) {
@@ -772,14 +564,4 @@
         return neko;
     };
 
-    // Auto-start if script has data-autostart attribute
-    if (document.currentScript && document.currentScript.hasAttribute("data-autostart")) {
-        if (document.readyState === "loading") {
-            document.addEventListener("DOMContentLoaded", function() {
-                window.neko = createNeko();
-            });
-        } else {
-            window.neko = createNeko();
-        }
-    }
 })();
