@@ -78,9 +78,6 @@
   const AWAKE_TIME = 1;
   const CLAW_TIME = 10;
 
-  // Sprite size
-  const SPRITE_SIZE = 32;
-
   class Neko {
     constructor(options = {}) { // MUST specify startX, startY
       // Configuration
@@ -88,6 +85,8 @@
       // Original used 16 pixels/tick for 640x480 screens (~2.5% of width)
       // Modern screens are ~3x larger, so default to 24 for similar feel
       this.speed = options.speed || 24;
+      this.sprite_size = options.sprite_size || 32;
+      this.allow_outside = options.allow_outside;
       this.idleThreshold = options.idleThreshold || 6; // Original m_dwIdleSpace = 6
 
       // State
@@ -100,14 +99,15 @@
       this.moveDY = 0;
 
       // Bounds - clientWidth excludes scrollbar, innerHeight is viewport height
-      this.boundsWidth = document.documentElement.clientWidth - SPRITE_SIZE;
-      this.boundsHeight = window.innerHeight - SPRITE_SIZE;
+      this.boundsWidth = document.documentElement.clientWidth - this.sprite_size;
+      this.boundsHeight = window.innerHeight - this.sprite_size;
 
       // Mouse tracking - null until first mouse event
       // This prevents neko from running somewhere before user moves mouse
       this.mouseX = null;
       this.mouseY = null;
       this.hasMouseMoved = false;
+      this.whenArrived = undefined;
 
       // DOM element
       this.element = null;
@@ -150,17 +150,18 @@
       this.prevLogicX = this.x;
       this.prevLogicY = this.y;
       // Initialize target to current position (so no initial movement)
-      this.targetX = this.x + SPRITE_SIZE / 2;
-      this.targetY = this.y + SPRITE_SIZE - 1;
+      this.targetX = this.x + this.sprite_size / 2;
+      this.targetY = this.y + this.sprite_size - 1;
       this.oldTargetX = this.targetX;
       this.oldTargetY = this.targetY;
       this.updatePosition();
     }
     
-    goto(x, y) {
+    goto(x, y, next_state) {
         this.mouseX = x;
         this.mouseY = y;
         this.hasMouseMoved = true;
+        this.whenArrived = next_state;
     }
 
     init(startX, startY) {
@@ -169,8 +170,8 @@
       this.element.className = "neko";
       this.element.style.cssText = `
         position: fixed;
-        width: ${SPRITE_SIZE}px;
-        height: ${SPRITE_SIZE}px;
+        width: ${this.sprite_size}px;
+        height: ${this.sprite_size}px;
         image-rendering: pixelated;
         z-index: 999999;
         left: ${this.x}px;
@@ -207,14 +208,16 @@
 
       document.body.appendChild(this.element);
 
-      // Update bounds on resize
-      window.addEventListener("resize", () => {
-        this.boundsWidth = document.documentElement.clientWidth - SPRITE_SIZE;
-        this.boundsHeight = window.innerHeight - SPRITE_SIZE;
-        if(this.x > this.boundsWidth || this.y > this.boundsHeight) {
-          this.set_position(Math.random() * this.boundsWidth, Math.random() * this.boundsHeight);
-        }
-      });
+      if(!this.allow_outside) {
+        // Update bounds on resize
+        window.addEventListener("resize", () => {
+          this.boundsWidth = document.documentElement.clientWidth - this.sprite_size;
+          this.boundsHeight = window.innerHeight - this.sprite_size;
+          if(this.x > this.boundsWidth || this.y > this.boundsHeight) {
+            this.set_position(Math.random() * this.boundsWidth, Math.random() * this.boundsHeight);
+          }
+        });
+      }
       
       this.set_position(startX, startY);
 
@@ -325,8 +328,8 @@
       if (!this.hasMouseMoved) {
         // Just idle in place - pass target that results in zero movement
         this.runTowards(
-          this.logicX + SPRITE_SIZE / 2,
-          this.logicY + SPRITE_SIZE - 1
+          this.logicX + this.sprite_size / 2,
+          this.logicY + this.sprite_size - 1
         );
         return;
       }
@@ -348,8 +351,8 @@
       this.targetY = targetY;
 
       // Calculate distance to target (using logic position, not display position)
-      const dx = targetX - this.logicX - SPRITE_SIZE / 2; // Stop in middle of cursor
-      const dy = targetY - this.logicY - SPRITE_SIZE + 1; // Just above cursor
+      const dx = targetX - this.logicX - this.sprite_size / 2; // Stop in middle of cursor
+      const dy = targetY - this.logicY - this.sprite_size + 1; // Just above cursor
       const distance = Math.sqrt(dx * dx + dy * dy);
 
       // Calculate movement delta (like original m_nDX, m_nDY)
@@ -371,10 +374,6 @@
         this.moveDY = 0;
       }
 
-      // Store for paceAroundScreen check
-      this.lastMoveDX = this.moveDX;
-      this.lastMoveDY = this.moveDY;
-
       // Check if target moved (MoveStart equivalent)
       const moveStart = !(
         this.oldTargetX >= this.targetX - this.idleThreshold &&
@@ -390,13 +389,13 @@
             this.setState(NekoState.AWAKE);
           } else if (this.stateCount >= STOP_TIME) {
             // Check for wall scratching using preserved moveDX/moveDY
-            if (this.moveDX < 0 && this.logicX <= 0) {
+            if ((!this.allow_outside) && this.moveDX < 0 && this.logicX <= 0) {
               this.setState(NekoState.L_CLAW);
-            } else if (this.moveDX > 0 && this.logicX >= this.boundsWidth) {
+            } else if ((!this.allow_outside) && this.moveDX > 0 && this.logicX >= this.boundsWidth) {
               this.setState(NekoState.R_CLAW);
-            } else if (this.moveDY < 0 && this.logicY <= 0) {
+            } else if ((!this.allow_outside) && this.moveDY < 0 && this.logicY <= 0) {
               this.setState(NekoState.U_CLAW);
-            } else if (this.moveDY > 0 && this.logicY >= this.boundsHeight) {
+            } else if ((!this.allow_outside) && this.moveDY > 0 && this.logicY >= this.boundsHeight) {
               this.setState(NekoState.D_CLAW);
             } else {
               this.setState(NekoState.WASH);
@@ -451,18 +450,21 @@
           // Calculate new position using preserved moveDX/moveDY
           let newX = this.logicX + this.moveDX;
           let newY = this.logicY + this.moveDY;
-          const wasOutside =
+          const wasOutside = (this.allow_outside ? false : (
             newX <= 0 ||
             newX >= this.boundsWidth ||
             newY <= 0 ||
-            newY >= this.boundsHeight;
+            newY >= this.boundsHeight
+          ));
 
           // Update direction
           this.calcDirection(this.moveDX, this.moveDY);
 
-          // Clamp position
-          newX = Math.max(0, Math.min(this.boundsWidth, newX));
-          newY = Math.max(0, Math.min(this.boundsHeight, newY));
+          if(!this.allow_outside) {
+            // Clamp position
+            newX = Math.max(0, Math.min(this.boundsWidth, newX));
+            newY = Math.max(0, Math.min(this.boundsHeight, newY));
+          }
           const notMoved = newX === this.logicX && newY === this.logicY;
 
           // Stop if we can't go further
@@ -496,7 +498,7 @@
       let newState;
 
       if (dx === 0 && dy === 0) {
-        newState = NekoState.STOP;
+        newState = (this.whenArrived === undefined ? NekoState.STOP : this.whenArrived);
       } else {
         const largeX = dx;
         const largeY = -dy; // Y is inverted
