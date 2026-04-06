@@ -208,16 +208,35 @@
 
       document.body.appendChild(this.element);
 
-      if(!this.allow_outside) {
-        // Update bounds on resize
-        window.addEventListener("resize", () => {
-          this.boundsWidth = document.documentElement.clientWidth - this.sprite_size;
-          this.boundsHeight = window.innerHeight - this.sprite_size;
-          if(this.x > this.boundsWidth || this.y > this.boundsHeight) {
-            this.set_position(Math.random() * this.boundsWidth, Math.random() * this.boundsHeight);
+      // interactivity
+      if(true) {
+        this.element.addEventListener("mousedown", (e) => {
+          e.stopPropagation();
+          e.preventDefault(); // Prevent text selection
+          if(!this.isIdle()) { return; }
+          if(Math.random() < .5) {
+            this.setState(NekoState.D_CLAW);
+          } else {
+            const moveby = this.sprite_size * 3;
+            if(this.x > this.boundsWidth - this.x) {
+              if(this.x > moveby) { this.goto(this.x - moveby, this.y + this.sprite_size); }
+            } else {
+              if(this.x + moveby < this.boundsWidth) { this.goto(this.x + moveby, this.y + this.sprite_size); }
+            }
           }
         });
       }
+
+      // Update bounds on resize
+      window.addEventListener("resize", () => {
+        this.boundsWidth = document.documentElement.clientWidth - this.sprite_size;
+        this.boundsHeight = window.innerHeight - this.sprite_size;
+        if(!this.allow_outside) {
+          if(this.x > this.boundsWidth || this.y > this.boundsHeight) {
+            this.set_position(Math.random() * this.boundsWidth, Math.random() * this.boundsHeight);
+          }
+        }
+      });
       
       this.set_position(startX, startY);
 
